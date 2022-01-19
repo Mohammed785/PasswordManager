@@ -5,6 +5,7 @@ import { join } from "path";
 
 let passwordModel: Model<LooseObject>;
 let db: Trilogy;
+
 const createWindow = () => {
     const win = new BrowserWindow({
         width: 1100,
@@ -18,6 +19,7 @@ const createWindow = () => {
     });
     win.loadFile(join(__dirname, "..", "static", "html", "main.html"));
 };
+
 const tryCatch = (fn: Function) => {
     return async (event: IpcMainEvent, ...args: any[]) => {
         try {
@@ -27,6 +29,7 @@ const tryCatch = (fn: Function) => {
         }
     };
 };
+
 ipcMain.on("ask-confirm", (event, arg) => {
     dialog.showMessageBox(BrowserWindow.getFocusedWindow()!, {
             message:"Check Your Input You May Delete Entire Platform Are You Sure",

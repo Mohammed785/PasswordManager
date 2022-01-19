@@ -1,4 +1,4 @@
-import {contextBridge, ipcRenderer,BrowserWindow} from "electron";
+import {contextBridge, ipcRenderer} from "electron";
 import {Password,PasswordDraft} from "./@types";
 
 contextBridge.exposeInMainWorld(
