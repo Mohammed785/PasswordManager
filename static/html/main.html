@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'">
+    <meta http-equiv="X-Content-Security-Policy" content="default-src 'self'; script-src 'self'">
+    <link rel="stylesheet" href="../css/style.css">
+    <title>Password Manager</title>
+</head>
+<body>
+    <div class="theme-area">
+        <div class="color-list">
+            <div class="color blue selected" data-darkMain="#005696" data-lightMain="#0d9ef1"></div>
+            <div class="color red" data-darkMain="#861c2f" data-lightMain="#ed3253"></div>
+            <div class="color gold"data-darkMain="#cb9867" data-lightMain="#fdc692"></div>
+        </div>
+    </div>
+    <div class="container">
+        <div class="input-section">
+            <div class="inp">
+                <input type="text" placeholder="Platform" name="platform" id="platform">
+            </div>
+            <div class="inp">
+                <input type="text" placeholder="Username or Email" name="username" id="username">
+            </div>
+            <div class="inp">
+                <input type="text" placeholder="Password" name="password" id="password">
+            </div>
+        </div>
+        <div class="btns-section">
+            <button class="btn" id="get">Get Passwords</button>
+            <button class="btn" id="add">Add Password</button>
+            <button class="btn" id="update">Update Password</button>
+            <button class="btn" id="delete">Delete Password</button>
+        </div>
+        <div class="info-section">
+            <button class="btn"  id="clear">Clear</button>
+            <textarea name="info" id="info-area" placeholder="Info" readonly></textarea>
+        </div>
+    </div>
+    <script src="../script.js"></script>
+</body>
+</html>

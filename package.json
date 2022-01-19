@@ -1,0 +1,23 @@
+{
+  "name": "PasswordManager",
+  "version": "1.0.0",
+  "description": "",
+  "main": "./src/main.js",
+  "scripts": {
+    "build": "tsc",
+    "prestart": "npm run build",
+    "start": "electron . "
+  },
+  "keywords": [],
+  "author": "Mohammed",
+  "license": "ISC",
+  "dependencies": {
+    "electron": "^16.0.4",
+    "sql.js": "^1.6.2",
+    "trilogy": "^2.0.5"
+  },
+  "devDependencies": {
+    "@types/electron": "^1.6.10",
+    "@types/node": "^17.0.8"
+  }
+}
