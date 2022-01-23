@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'">
+    <meta http-equiv="X-Content-Security-Policy" content="default-src 'self'; script-src 'self'">
+    <link rel="stylesheet" href="../css/auth.css">
+    <title>Login</title>
+</head>
+
+<body>
+    <div class="errors">
+    </div>
+    <div class="container">
+        <div class="inputs">
+            <input type="text" id="username" placeholder="Username" />
+            <input type="password" id="password" placeholder="Password" />
+            <button type="submit" name="login" id="submit">Login</button>
+        </div>
+        <div class="help-btns">
+            <button class="help-btn" name="forget">Forget Password</button>
+            <button class="help-btn" name="need-acc">Don't Have Account</button>
+        </div>
+    </div>
+    <script src="../js/auth.js"></script>
+</body>
+
+</html>
