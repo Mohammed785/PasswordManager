@@ -1,9 +1,9 @@
 import { contextBridge, ipcRenderer } from "electron";
-
-contextBridge.exposeInMainWorld("auth",{
-    login:()=>{},
-    register:()=>{},
-    needAccount:()=>{},
-    haveAccount:()=>{},
-    forgetPass:()=>{}
-})
+import {} from "crypto"
+contextBridge.exposeInMainWorld("auth", {
+    login: (username: string, password: string) => {ipcRenderer.send("login",username,password)},
+    register: (username: string, password: string) => {ipcRenderer.send("register",username,password)},
+    needAccount: () => {},
+    haveAccount: () => {},
+    forgetPass: () => {},
+});
