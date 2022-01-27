@@ -1,10 +1,12 @@
-import { app, BrowserWindow, ipcMain, IpcMainEvent,dialog } from "electron";
-import { LooseObject, Model, Trilogy } from "trilogy";
+import { app, BrowserWindow, ipcMain, IpcMainEvent, dialog } from "electron";
 import { connectDB, createModel, getPassword, createPassword, updatePassword, deletePassword } from "./db";
+import { LooseObject, Model, Trilogy } from "trilogy";
+import { tryCatch } from "./utils"
 import { join } from "path";
 
 let passwordModel: Model<LooseObject>;
-let db: Trilogy;
+let userModel: Model<LooseObject>;
+export let db: Trilogy;
 
 const createWindow = () => {
     const win = new BrowserWindow({
@@ -20,15 +22,6 @@ const createWindow = () => {
     win.loadFile(join(__dirname, "..", "static", "html", "main.html"));
 };
 
-const tryCatch = (fn: Function) => {
-    return async (event: IpcMainEvent, ...args: any[]) => {
-        try {
-            await fn(event, ...args);
-        } catch (error) {
-            event.reply("Error", error);
-        }
-    };
-};
 
 ipcMain.on("ask-confirm", (event, arg) => {
     dialog.showMessageBox(BrowserWindow.getFocusedWindow()!, {
@@ -75,6 +68,7 @@ app.whenReady().then(async () => {
             await createModel(db);
         }
         passwordModel = await db.getModel("Password");
+        userModel = await db.getModel("User")
     } catch (error) {
         console.log(error);
     }
