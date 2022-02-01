@@ -1,18 +1,17 @@
-export interface User {
+export interface IUser {
     username:string,
     password:string
 }
 
-export interface Password {
+export interface IPassword {
     platform:string
     username:string
     password:string
 }
 
-export interface Note {
+export interface INote {
     title:string
     note:string
 }
 
-export interface PasswordDraft extends Partial<Password> {}
-
+export interface IPasswordDraft extends Partial<IPassword> {}

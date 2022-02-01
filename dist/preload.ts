@@ -1,14 +1,14 @@
 import {contextBridge, ipcRenderer} from "electron";
-import {Password,PasswordDraft} from "./@types";
+import {IPassword,IPasswordDraft} from "./@types";
 
 contextBridge.exposeInMainWorld(
     "api",{
         getAll:()=>ipcRenderer.send("getAll"),
-        getPasswords:(criteria:PasswordDraft)=>ipcRenderer.send("getPasswords",criteria),
-        createPassword:(password:Password)=>ipcRenderer.send("createPassword",password),
-        updatePassword:(criteria:PasswordDraft,newPass:PasswordDraft)=>ipcRenderer.send("updatePassword",criteria,newPass),
-        deletePassword:(criteria:PasswordDraft)=>ipcRenderer.send("deletePassword",criteria),
-        deletePlatform:(criteria:PasswordDraft)=>{
+        getPasswords:(criteria:IPasswordDraft)=>ipcRenderer.send("getPasswords",criteria),
+        createPassword:(password:IPassword)=>ipcRenderer.send("createPassword",password),
+        updatePassword:(criteria:IPasswordDraft,newPass:IPasswordDraft)=>ipcRenderer.send("updatePassword",criteria,newPass),
+        deletePassword:(criteria:IPasswordDraft)=>ipcRenderer.send("deletePassword",criteria),
+        deletePlatform:(criteria:IPasswordDraft)=>{
             ipcRenderer.send("ask-confirm",criteria)
         }
     }
@@ -20,7 +20,7 @@ window.addEventListener("DOMContentLoaded",()=>{
     infoArea = document.getElementById("info-area") as HTMLTextAreaElement;
 });
 
-const showPasswordInfo = (password: Password,all=false) => {
+const showPasswordInfo = (password: IPassword,all=false) => {
     if(!all)infoArea.value = "";
     if (!password) {
         infoArea.value = "Not Found";
@@ -42,10 +42,10 @@ const clearInput = ()=>{
 }
 ipcRenderer.on("gotPassword",(event,data)=>{
     if(data.length===0){
-        showErrorMsg("Password Not Found")
+        showErrorMsg("IPassword Not Found")
         return;
     }
-    data.forEach((element: Password,idx:number) => {
+    data.forEach((element: IPassword,idx:number) => {
         const First = (idx === 0) ?  false: true;
         showPasswordInfo(element, First);
     });
