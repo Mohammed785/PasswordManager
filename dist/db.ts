@@ -1,6 +1,6 @@
 import { connect, Trilogy, Model, LooseObject, SchemaRaw } from "trilogy";
+import { INote, IPassword, IPasswordDraft } from "./@types";
 import { join } from "path";
-import { Password, PasswordDraft } from "./@types";
 
 //Schemas
 const UserSchema: SchemaRaw = {
@@ -41,22 +41,22 @@ export const createModel = (db: Trilogy) => {
     return { passwordModel, userModel, noteModel };
 };
 // Password
-export const getPassword = (db: Model<LooseObject>, pass: PasswordDraft) => {
+export const getPassword = (db: Model<LooseObject>, pass: IPasswordDraft) => {
     const passwords = db.find(pass);
     return passwords;
 };
 
-export const createPassword = (db: Model<LooseObject>, pass: Password) => {
+export const createPassword = (db: Model<LooseObject>, pass: IPassword) => {
     const password = db.create(pass);
     return password;
 };
 
-export const updatePassword = (db: Model<LooseObject>,oldPass: PasswordDraft,newPass: PasswordDraft) => {
+export const updatePassword = (db: Model<LooseObject>,oldPass: IPasswordDraft,newPass: IPasswordDraft) => {
     const updated = db.update(oldPass, newPass);
     return updated;
 };
 
-export const deletePassword = (db: Model<LooseObject>, pass: PasswordDraft) => {
+export const deletePassword = (db: Model<LooseObject>, pass: IPasswordDraft) => {
     const deleted = db.remove(pass);
     return deleted;
 };
@@ -68,10 +68,22 @@ export const findUser = (db: Model<LooseObject>, username:string)=>{
 }
 
 //Note
-const findAllNotes = (db: Model<LooseObject>, username:string)=>{};
+const findAllNotes = (db: Model<LooseObject>)=>{
+    const notes = db.find()
+    return notes
+};
 
-const findNote = (db: Model<LooseObject>, username:string)=>{};
+const findNote = (db: Model<LooseObject>,id:number)=>{
+    const note = db.findOne({id})
+    return note
+};
 
-const updateNote = (db: Model<LooseObject>, username:string)=>{};
+const updateNote = (db: Model<LooseObject>, id:number,newInfo:INote)=>{
+    const note = db.update({id},{newInfo})
+    return note
+};
 
-const deleteNote = (db: Model<LooseObject>, username:string)=>{};
+const deleteNote = (db: Model<LooseObject>, id:number)=>{
+    const note = db.remove({id})
+    return note
+};
