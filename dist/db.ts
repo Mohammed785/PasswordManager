@@ -67,6 +67,10 @@ export const findUser = (db: Model<LooseObject>, username:string)=>{
     return user
 }
 
+export const createUser = (db: Model<LooseObject>, username:string, password:string) => {
+    const user = db.create({username,password})
+    return user
+}
 //Note
 const findAllNotes = (db: Model<LooseObject>)=>{
     const notes = db.find()

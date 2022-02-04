@@ -1,25 +1,39 @@
 import { app, BrowserWindow, ipcMain, IpcMainEvent, dialog } from "electron";
 import { connectDB, createModel, getPassword, createPassword, updatePassword, deletePassword } from "./db";
+import { login, register } from "./auth/auth";
 import { LooseObject, Model, Trilogy } from "trilogy";
-import { tryCatch } from "./utils"
+import { sendMsg, tryCatch } from "./utils";
 import { join } from "path";
 
 let passwordModel: Model<LooseObject>;
 let userModel: Model<LooseObject>;
+let currentUser: LooseObject|undefined;
 export let db: Trilogy;
 
 const createWindow = () => {
-    const win = new BrowserWindow({
+    const mainWin = new BrowserWindow({
         width: 1100,
         height: 900,
         center: true,
+        show:false,
         webPreferences: {
             preload: join(__dirname, "preload.js"),
             nodeIntegration: true,
             safeDialogs: true,
         },
     });
-    win.loadFile(join(__dirname, "..", "static", "html", "main.html"));
+    mainWin.loadFile(join(__dirname, "..", "static", "html", "main.html"));
+    const authWin = new BrowserWindow({
+        width: 1100,
+        height: 900,
+        center: true,
+        webPreferences: {
+            preload: join(__dirname, "auth", "authPreload.js"),
+            nodeIntegration: true,
+            safeDialogs: true,
+        },
+    });
+    authWin.loadFile(join(__dirname, "..", "static", "html", "login.html"));
 };
 
 
@@ -37,6 +51,40 @@ ipcMain.on("ask-confirm", (event, arg) => {
             }
         }).catch((e) => event.reply("Error",e));
 });
+
+ipcMain.on("load-login",()=>{
+    BrowserWindow.getAllWindows()[0].loadFile(join(__dirname,"..","static","html","login.html"))
+})
+ipcMain.on("load-register",()=>{
+    BrowserWindow.getAllWindows()[0].loadFile(join(__dirname,"..","static","html","register.html"))
+})
+
+ipcMain.on("login",async (event,username,password)=>{
+    const user = await login(userModel,username,password)
+    if(user){
+        BrowserWindow.getAllWindows()[0].hide()
+        BrowserWindow.getAllWindows()[1].show()
+        currentUser = user;
+    }
+})
+
+ipcMain.on("logout",(event)=>{
+    if(!currentUser){
+        sendMsg("You Need To Login First")
+    }else{
+        currentUser = undefined;
+        sendMsg("Logged Out Successfully",false)
+    }
+})
+
+ipcMain.on("register",async(event,username,password)=>{
+    const user = await register(userModel,username,password)
+    if(user){
+        BrowserWindow.getAllWindows()[0].loadFile(join(__dirname,"..","static","html","login.html"))
+        sendMsg("Account Created You can login", false);
+    }
+})
+
 ipcMain.on("getPasswords",tryCatch(async (event: IpcMainEvent, arg: any) => {
         const data = await getPassword(passwordModel, arg);
         event.reply("gotPassword", data);

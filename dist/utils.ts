@@ -10,9 +10,8 @@ export const tryCatch = (fn: Function) => {
     };
 };
 
-export const sendError = (error:string,level:number) => {
-    ipcMain.emit("Error",error,level)
-}
-export const sendNotification = (body:string) => {
-    ipcMain.emit("Notification",body)
+export const sendMsg = (msg:string,isError=true) => {
+    console.error(msg);
+    if(isError)ipcMain.emit("Error",msg)
+    else ipcMain.emit("success",msg)
 }

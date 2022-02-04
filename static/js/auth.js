@@ -10,23 +10,19 @@ submitBtn.addEventListener("click",(e)=>{
     const username = usernameInp.value;
     const password = passwordInp.value;
     if(!username || !password){
-        showError("Please Enter Both Username And Password")
+        showMsg("Please Enter Both Username And Password")
         return;
     }
     if(e.target.name==='login'){
         window.auth.login(username,password)
     }else{
-        if (password.length < 8) {
-            showError("Min Password Length Is 8 Characters");
-            return;
-        }
         window.auth.register(username, password);
     }
 })
 
-const showError = (msg,type='error')=>{
+const showMsg = (msg,isError=true)=>{
     errorArea.innerHTML += `
-    <div class="error-msg ${type.toLowerCase()}">
+    <div class="error-msg ${(isError)?'error':'success'}">
             <span class="close">&times;</span>
             ${msg}
     </div>
@@ -50,9 +46,9 @@ helpBtns.forEach(btn=>{
         }else if(name==='need-acc'){
             window.auth.needAccount();
         }else if(name==='have-acc'){
-            window.api.haveAccount();
+            window.auth.haveAccount();
         }else{
-            window.api.forgetPass()
+            window.auth.forgetPass()
         }
     })
 })
