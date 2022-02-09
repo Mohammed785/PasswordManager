@@ -1,6 +1,7 @@
 import { connect, Trilogy, Model, LooseObject, SchemaRaw } from "trilogy";
 import { INote, IPassword, IPasswordDraft } from "./@types";
 import { join } from "path";
+import { userModel, passwordModel, noteModel } from "./main"
 
 //Schemas
 const UserSchema: SchemaRaw = {
@@ -40,54 +41,56 @@ export const createModel = (db: Trilogy) => {
     const noteModel = db.model("Note", NoteSchema, { timestamps: true });
     return { passwordModel, userModel, noteModel };
 };
+
 // Password
-export const getPassword = (db: Model<LooseObject>, pass: IPasswordDraft) => {
-    const passwords = db.find(pass);
+export const getPassword = (pass: IPasswordDraft) => {
+    const passwords = passwordModel.find(pass);
     return passwords;
 };
 
-export const createPassword = (db: Model<LooseObject>, pass: IPassword) => {
-    const password = db.create(pass);
+export const createPassword = (pass: IPassword) => {
+    const password = passwordModel.create(pass);
     return password;
 };
 
-export const updatePassword = (db: Model<LooseObject>,oldPass: IPasswordDraft,newPass: IPasswordDraft) => {
-    const updated = db.update(oldPass, newPass);
+export const updatePassword = (oldPass: IPasswordDraft,newPass: IPasswordDraft) => {
+    const updated = passwordModel.update(oldPass, newPass);
     return updated;
 };
 
-export const deletePassword = (db: Model<LooseObject>, pass: IPasswordDraft) => {
-    const deleted = db.remove(pass);
+export const deletePassword = (pass: IPasswordDraft) => {
+    const deleted = passwordModel.remove(pass);
     return deleted;
 };
 
 // User
-export const findUser = (db: Model<LooseObject>, username:string)=>{
-    const user = db.findOne({username});
+export const findUser = (username:string)=>{
+    const user = userModel.findOne({username});
     return user
 }
 
-export const createUser = (db: Model<LooseObject>, username:string, password:string) => {
-    const user = db.create({username,password})
+export const createUser = (username:string, password:string) => {
+    const user = userModel.create({username,password})
     return user
 }
+
 //Note
-const findAllNotes = (db: Model<LooseObject>)=>{
-    const notes = db.find()
+export const findAllNotes = ()=>{
+    const notes = noteModel.find()
     return notes
 };
 
-const findNote = (db: Model<LooseObject>,id:number)=>{
-    const note = db.findOne({id})
+export const findNote = (id:number)=>{
+    const note = noteModel.findOne({id})
     return note
 };
 
-const updateNote = (db: Model<LooseObject>, id:number,newInfo:INote)=>{
-    const note = db.update({id},{newInfo})
+export const updateNote = (id:number,newInfo:INote)=>{
+    const note = noteModel.update({id},{newInfo})
     return note
 };
 
-const deleteNote = (db: Model<LooseObject>, id:number)=>{
-    const note = db.remove({id})
+export const deleteNote = (id:number)=>{
+    const note = noteModel.remove({id})
     return note
 };
