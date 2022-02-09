@@ -8,3 +8,13 @@ interface Window {
         deletePlatform:(criteria)=>void;
     };
 }
+
+declare global{
+    namespace NodeJS{
+        interface ProcessEnv{
+            MASTER_SALT:string
+        }
+    }
+}
+
+export {}
