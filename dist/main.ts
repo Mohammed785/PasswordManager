@@ -67,6 +67,7 @@ ipcMain.on("login",async (event,username,password)=>{
         BrowserWindow.getAllWindows()[0].hide()
         BrowserWindow.getAllWindows()[1].show()
         currentUser = user;
+        sendMsg(`Welcome Back ${user.username}`)
     }
 })
 
