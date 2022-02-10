@@ -108,13 +108,30 @@
                 <!-- <span class="circle__back-2"></span> -->
             </div>
             <div class="input-section">
-                <input type="text" placeholder="Platform" name="platform" id="platform">
+                <select name="platform" id="platform">
+                    <option value="Facebook">Facebook</option>
+                    <option value="Instagram">Instagram</option>
+                    <option value="Google">Google</option>
+                    <option value="Apple">Apple</option>
+                    <option value="Github">Github</option>
+                    <option value="StackOverflow">StackOverflow</option>
+                    <option value="Slack">Slack</option>
+                    <option value="Discord">Discord</option>
+                    <option value="Netflix">Netflix</option>
+                    <option value="Amazon">Amazon</option>
+                    <option value="Disney+">Disney+</option>
+                    <option value="HBO">HBO</option>
+                </select>
                 <input type="text" placeholder="Username or Email" name="username" id="username">
                 <input type="password" placeholder="Password" name="password" id="password">
             </div>
+            <div class="date-section">
+                <p>Created At:xx/xx/xxxx</p>
+                <p>Updated At:xx/xx/xxxx</p>
+            </div>
             <div class="btn-section">
-                <button class="btn">Delete</button>
-                <button class="btn">Update</button>
+                <button class="btn" id="delete">Delete</button>
+                <button class="btn" id="update">Update</button>
             </div>
         </div>
         <div class="sections">

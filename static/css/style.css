@@ -115,6 +115,9 @@ body {
     align-items: center;
     padding: 7px 0;
     margin: 5px 0;
+    cursor: pointer;
+    box-shadow: inset 1px 1px 1px var(--color-light),
+        inset -1px -1px 1px var(--color-shadow), 2px 2px 2px var(--color-shadow)
 }
 
 .item:first-child{
@@ -176,7 +179,7 @@ body {
     margin: 13% 0;
 }
 
-.input-section input {
+.input-section input,select {
     display: block;
     width: 45vw;
     padding: 0.5rem 0.6rem;
@@ -202,19 +205,19 @@ body {
     transition: all 0.4s ease;
 }
 
-.input-section input:hover {
+.input-section input:hover,select {
     background: var(--color-shadow);
     padding: 0.625rem 0.25rem;
 }
-.input-section input:focus {
+.input-section input:focus,select {
     box-shadow: 6px 6px 15px var(--color-shadow),
         -6px -6px 15px var(--color-light);
     color: var(--light-main);
 }
-.input-section input::placeholder {
+.input-section input::placeholder,select {
     color: var(--dark-main);
 }
-.input-section input:hover::placeholder {
+.input-section input:hover::placeholder,select {
     color: var(--light-main);
 }
 
@@ -331,7 +334,20 @@ textarea:focus {
 textarea:placeholder-shown {
     background: none;
 } */
-
+.date-section {
+    margin-bottom: 7%;
+    display: flex;
+}
+.date-section p {
+    margin: 0 1rem;
+    padding: 0.5rem;
+    box-shadow: inset 0 0 0 2px var(--bgColor),
+        inset -2px -2px 2px 2px var(--color-light),
+        -1px -1px 4px 0px var(--color-light),
+        -2px -2px 8px 0px var(--color-light),
+        inset 4px 4px 4px 2px var(--color-shadow),
+        2px 2px 8px 0px var(--color-shadow);
+}
 .theme-area {
     position: absolute;
     top: 0;
@@ -358,12 +374,6 @@ textarea:placeholder-shown {
         1px 1px 4px 0px var(--color-shadow), 2px 2px 8px 0px var(--color-shadow);
 }
 
-#cancel {
-    position: absolute;
-    right: 0;
-    width: min-content;
-    padding: 8px;
-}
 .color {
     margin: 0.5rem 0.5rem;
     border-radius: 50%;
