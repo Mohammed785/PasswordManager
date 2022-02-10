@@ -7,9 +7,11 @@ import { LooseObject, Model, Trilogy } from "trilogy";
 import { sendMsg, tryCatch } from "./utils";
 import { join } from "path";
 
-let passwordModel: Model<LooseObject>;
-let userModel: Model<LooseObject>;
-let currentUser: LooseObject|undefined;
+export let passwordModel: Model<LooseObject>;
+export let userModel: Model<LooseObject>;
+export let noteModel: Model<LooseObject>;
+export let cardModel: Model<LooseObject>;
+export let currentUser: LooseObject|undefined;
 export let db: Trilogy;
 
 const createWindow = () => {
@@ -48,7 +50,7 @@ ipcMain.on("ask-confirm", (event, arg) => {
             if(res.response===1){
                 event.reply('Error','Delete Cancelled');
             }else{
-                const data = await deletePassword(passwordModel,arg);
+                const data = await deletePassword(arg);
                 event.reply("deleted",data);
             }
         }).catch((e) => event.reply("Error",e));
@@ -89,25 +91,25 @@ ipcMain.on("register",async(event,username,password)=>{
 })
 
 ipcMain.on("getPasswords",tryCatch(async (event: IpcMainEvent, arg: any) => {
-        const data = await getPassword(passwordModel, arg);
+        const data = await getPassword(arg);
         event.reply("gotPassword", data);
     })
 );
 
 ipcMain.on("createPassword",tryCatch(async (event: IpcMainEvent, arg: any) => {
-        const newPass = await createPassword(passwordModel, arg);
+        const newPass = await createPassword(arg);
         event.reply("created", newPass);
     })
 );
 
 ipcMain.on("updatePassword",tryCatch(async (event: IpcMainEvent, oldPass: any, newPass: any) => {
-        const updated = await updatePassword(passwordModel, oldPass, newPass);
+        const updated = await updatePassword(oldPass, newPass);
         event.reply("updated", updated);
     })
 );
 
 ipcMain.on("deletePassword",tryCatch(async (event: IpcMainEvent, arg: any) => {
-        const deleted = await deletePassword(passwordModel, arg);
+        const deleted = await deletePassword(arg);
         event.reply("deleted", deleted);
     })
 );
@@ -119,7 +121,9 @@ app.whenReady().then(async () => {
             await createModel(db);
         }
         passwordModel = await db.getModel("Password");
-        userModel = await db.getModel("User")
+        userModel = await db.getModel("User");
+        noteModel = await db.getModel("Note");
+        cardModel = await db.getModel("Card");
     } catch (error) {
         console.log(error);
     }

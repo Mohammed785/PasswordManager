@@ -1,17 +1,24 @@
 export interface IUser {
-    username:string,
-    password:string
+    username: string;
+    password: string;
 }
 
 export interface IPassword {
-    platform:string
-    username:string
-    password:string
+    platform: string;
+    username: string;
+    password: string;
 }
 
 export interface INote {
-    title:string
-    note:string
+    title: string;
+    note: string;
+}
+
+export interface ICard {
+    company: string;
+    cardNumber: string;
+    ExpDate: Date;
+    CVV: string;
 }
 
 export interface IPasswordDraft extends Partial<IPassword> {}

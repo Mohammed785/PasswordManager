@@ -1,7 +1,7 @@
-import { connect, Trilogy, Model, LooseObject, SchemaRaw } from "trilogy";
+import { connect, Trilogy, SchemaRaw } from "trilogy";
 import { INote, IPassword, IPasswordDraft } from "./@types";
 import { join } from "path";
-import { userModel, passwordModel, noteModel } from "./main"
+import { userModel, passwordModel, noteModel, cardModel } from "./main"
 
 //Schemas
 const UserSchema: SchemaRaw = {
@@ -23,6 +23,13 @@ const NoteSchema: SchemaRaw = {
     id: "increments",
 };
 
+const CreditCardSchema: SchemaRaw = {
+    company: { type: String },
+    cardNumber: { type: String },
+    ExpDate: { type: Date },
+    CVV: { type: String },
+};
+
 //DB
 export const connectDB = () => {
     return connect(join(__dirname, "..", "database.db"), { client: "sql.js" });
@@ -39,6 +46,7 @@ export const createModel = (db: Trilogy) => {
         timestamps: true,
     });
     const noteModel = db.model("Note", NoteSchema, { timestamps: true });
+    const CreditCardModel = db.model("Credit", CreditCardSchema,{timestamps:true})
     return { passwordModel, userModel, noteModel };
 };
 
@@ -93,4 +101,25 @@ export const updateNote = (id:number,newInfo:INote)=>{
 export const deleteNote = (id:number)=>{
     const note = noteModel.remove({id})
     return note
+};
+
+// Card
+export const findAllCards = ()=>{
+    const cards = cardModel.find()
+    return cards
+}
+
+const findCard = (id:number)=>{
+    const card = cardModel.findOne({id})
+    return card
+}
+
+export const updateCard = (id: number, newInfo: INote) => {
+    const note = cardModel.update({ id }, { newInfo });
+    return note;
+};
+
+export const deleteCard = (id: number) => {
+    const note = cardModel.remove({ id });
+    return note;
 };
