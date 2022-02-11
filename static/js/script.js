@@ -1,71 +1,115 @@
-const btns = document.querySelectorAll(".btn");
-const inputSection = document.querySelector(".input-section");
-const infoArea = document.getElementById("info-area");
-const platformInput = document.getElementById("platform");
-const usernameInput = document.getElementById("username");
-const passwordInput = document.getElementById("password");
-let cancelBtn;
-let updateReady = false;
-let updateSearch;
+const dataSection = document.querySelector('.data-section');
+const sections = document.querySelectorAll('.section');
+let inputs;
+let btns;
+let closeBtn;
+let createBtn;
 
-btns.forEach((btn) => {
-    btn.addEventListener("click", (e) => {
-        const id = e.target.id;
-        if (id === "get") {
-            const search = checkInput();
-            window.api.getPasswords(search);
-        } else if (id === "add") {
-            const password = checkInput(true);
-            if (!password) return;
-            window.api.createPassword(password);
-        } else if (id === "update") {
-            if (!updateReady) {
-                updateSearch = checkInput();
-                if(!updateSearch.platform && !updateSearch.username){
-                    infoArea.value = "Enter What Password You Want To Change"
-                    return;
-                }
-                if(updateSearch.platform && !updateSearch.username){
-                    infoArea.value = "Enter Username For Password You Wan't To Update";
-                    return;
-                }
-                infoArea.value = "Enter New Values";
-                inputSection.innerHTML += `<button class="btn" id="cancel">Cancel Update</button>`;
-                updateReady = true;
-                cancelBtn = document.getElementById("cancel");
-                cancelBtn.addEventListener("click",(e)=>{
-                    updateReady = false;
-                    cancelBtn.parentNode.removeChild(cancelBtn)
-                    infoArea.value="Update Canceled"
-                });
-            } else {
-                const newValues = checkInput();
-                updateReady = false;
-                window.api.updatePassword(updateSearch, newValues);
+let currentView = null;
+let current = null;
+
+const queryDocument = (selectItem=true)=>{
+    if(selectItem){
+        inputs = document.querySelectorAll('.input')
+        closeBtn = document.querySelector(".close");
+        btns = document.querySelectorAll(".btn");
+        addEventToBtns();
+    }else{
+        createBtn = document.getElementById("create")
+        createBtn.addEventListener("click",e=>{
+            if (currentView === "password") {
+                const data = getInput((password = true));
+                window.password.create(data);
+            } else if (currentView === "note") {
+                const data = getInput((note = true));
+                window.note.create(data);
+            } else if (currentView === "credit") {
+                const data = getInput((credit = true));
+                window.credit.create(data);
             }
-        } else if (id === "delete") {
-            const search = checkInput();
-            if(search.platform && !search.username){
-                window.api.deletePlatform(search);
-            }else{
-                window.api.deletePassword(search);
-            }
-        } else if (id === "clear") {
-            infoArea.value = "";
-        }
-    });
-});
-const checkInput = (create = false) => {
-    let values = {};
-    if (create &&(!platformInput.value || !usernameInput.value || !passwordInput.value)) {
-        infoArea.value = "Enter All Fields";
-        return false;
+        })
     }
-    platformInput.value ? (values.platform = platformInput.value) : null;
-    usernameInput.value ? (values.username = usernameInput.value) : null;
-    passwordInput.value ? (values.password = passwordInput.value) : null;
-    return values;
-};
+}
+
+const getInput = (password=false,note=false,credit=false)=>{
+    const data = {};
+    if(password){
+        inputs.forEach((input) => {
+            if(input.id==='password') data.password = input.value
+            else if(input.id==='username') data.username = input.value
+            else if(input.id==='platform') data.platform = input.value
+        })
+    }else if(note){
+        inputs.forEach((input) => {
+            if (input.id === "title") data.title = input.value;
+            else if (input.id === "note") data.note = input.value;
+        });
+    }else if(credit){
+        inputs.forEach((input) => {
+            if (input.id === "company") data.company = input.value;
+            else if (input.id === "cardNumber") data.cardNumber = input.value;
+            else if (input.id === "expDate") data.expDate = input.value;
+            else if(input.id === "cvv") data.cvv = input.value
+        });
+    }
+    return data;
+}
+const addEventToBtns = ()=>{
+    btns.forEach((btn) => {
+        btn.addEventListener("click", (e) => {
+            const id = e.target.id;
+            if(id==='delete'){
+                const id = e.target.dataset.id
+                if (currentView === "password") {
+                    window.password.deletePassword(id);
+                } else if (currentView === "note") {
+                    window.note.deleteNote(id);
+                } else if (currentView === "credit") {
+                    window.credit.deleteCard(id);
+                }
+            }else if(id==="update"){
+                const id = e.target.dataset.id;
+                if (currentView === "password") {
+                    const newData = getInput(password=true)
+                    window.password.updatePassword(id,newData);
+                } else if (currentView === "note") {
+                    const newData = getInput(note = true);
+                    window.note.updateNote(id,newData);
+                } else if (currentView === "credit") {
+                    const newData = getInput(credit = true);
+                    window.credit.updateCard(id,newData);
+                }
+            }
+        });
+    });
+    closeBtn.addEventListener("click",e=>{
+        if (currentView === "password") {
+            dataSection.innerHTML = passwordMain;
+        } else if (currentView === "note") {
+            dataSection.innerHTML = noteMain;
+        } else if (currentView === "bank") {
+            dataSection.innerHTML = bankMain;
+        }
+    })
+}
+
+sections.forEach(section=>{
+    section.addEventListener("click",e=>{
+        const name=e.target.name;
+        if(name==="passwords"){
+            currentView = 'password'
+            dataSection.innerHTML = passwordMain;
+        }
+        else if(name==='notes'){
+            currentView = 'note'
+            dataSection.innerHTML = noteMain;
+        }
+        else if(name==='bank'){
+            currentView = 'bank'
+            dataSection.innerHTML = bankMain;
+        }
+    })
+})
 
 //UI
 const colors = document.querySelectorAll(".color");
@@ -80,3 +124,46 @@ colors.forEach((color) => {
         document.body.setAttribute("data-theme", theme);
     });
 });
+
+// main page html template
+const passwordMain = `<div class="input-section">
+                <select name="platform" id="platform" class="input" required>
+                    <option value="Facebook">Facebook</option>
+                    <option value="Instagram">Instagram</option>
+                    <option value="Google">Google</option>
+                    <option value="Apple">Apple</option>
+                    <option value="Github">Github</option>
+                    <option value="StackOverflow">StackOverflow</option>
+                    <option value="Slack">Slack</option>
+                    <option value="Discord">Discord</option>
+                    <option value="Netflix">Netflix</option>
+                    <option value="Amazon">Amazon</option>
+                    <option value="Disney+">Disney+</option>
+                    <option value="HBO">HBO</option>
+                </select>
+                <input type="text" class="input" placeholder="Username or Email" name="username" id="username" required>
+                <input type="password" class="input" placeholder="Password" name="password" id="password" required>
+            </div>
+            <div class="btn-section">
+                <button class="btn" id="create">Create</button>
+            </div>`;
+const bankMain = `<div class="input-section">
+                <select name="company" id="compeny" class="input" required>
+                    <option value="MasterCard">MasterCard</option>
+                    <option value="Visa">Visa</option>
+                    <option value="AmericanExpress">AmericanExpress</option>
+                </select>
+                <input type="text" class="input" placeholder="Card Number" name="cardNumber" id="cardNumber" required>
+                <input type="date" class="input" placeholder="Expire Date" name="expDate" id="expDate" required>
+                <input type="text" class="input" placeholder="CVV" name="cvv" id="cvv"  maxlength="3" required>
+            </div>
+            <div class="btn-section">
+                <button class="btn" id="create">Create</button>
+            </div>`;
+const noteMain = `<div class="input-section">
+                <input type="text" class="input" placeholder="Title for the note" name="title" id="noteTitle" required>
+                <textarea name="note" id="noteBody" placeholder="Note" cols="30" rows="10"></textarea>
+            </div>
+            <div class="btn-section">
+                <button class="btn" id="create">Create</button>
+            </div>`;
