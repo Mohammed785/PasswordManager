@@ -1,5 +1,5 @@
 import { connect, Trilogy, SchemaRaw } from "trilogy";
-import { INote, IPassword, IPasswordDraft } from "./@types";
+import { ICard, ICardDraft, INote, INoteDraft, IPassword, IPasswordDraft } from "./@types";
 import { join } from "path";
 import { userModel, passwordModel, noteModel, cardModel } from "./main"
 
@@ -26,8 +26,8 @@ const NoteSchema: SchemaRaw = {
 const CreditCardSchema: SchemaRaw = {
     company: { type: String },
     cardNumber: { type: String },
-    ExpDate: { type: Date },
-    CVV: { type: String },
+    expDate: { type: Date },
+    cvv: { type: String },
 };
 
 //DB
@@ -46,30 +46,45 @@ export const createModel = (db: Trilogy) => {
         timestamps: true,
     });
     const noteModel = db.model("Note", NoteSchema, { timestamps: true });
-    const CreditCardModel = db.model("Credit", CreditCardSchema,{timestamps:true})
-    return { passwordModel, userModel, noteModel };
+    const creditCardModel = db.model("Credit", CreditCardSchema,{timestamps:true})
+    return { passwordModel, userModel, noteModel, creditCardModel };
 };
 
 // Password
-export const getPassword = (pass: IPasswordDraft) => {
-    const passwords = passwordModel.find(pass);
-    return passwords;
-};
 
-export const createPassword = (pass: IPassword) => {
-    const password = passwordModel.create(pass);
+export const getAllPasswords = () => {
+    const passwords = passwordModel.find()
+    return passwords
+}
+
+export const getPassword = (id: number) => {
+    const password = passwordModel.findOne({id});
     return password;
 };
 
-export const updatePassword = (oldPass: IPasswordDraft,newPass: IPasswordDraft) => {
-    const updated = passwordModel.update(oldPass, newPass);
+export const createPassword = (data: IPassword) => {
+    const password = passwordModel.create(data);
+    return password;
+};
+
+export const updatePassword = (id:number,newData: IPasswordDraft) => {
+    const updated = passwordModel.update({id}, newData);
     return updated;
 };
 
-export const deletePassword = (pass: IPasswordDraft) => {
-    const deleted = passwordModel.remove(pass);
+export const deletePassword = (id: number) => {
+    const deleted = passwordModel.remove({id});
     return deleted;
 };
+
+export const getPlatform = (platform: string) => {
+    const passwords = passwordModel.find({platform})
+    return passwords
+}
+export const deletePlatform = (platform: string) => {
+    const passwords = passwordModel.remove({platform})
+    return passwords
+}
 
 // User
 export const findUser = (username:string)=>{
@@ -93,8 +108,13 @@ export const findNote = (id:number)=>{
     return note
 };
 
-export const updateNote = (id:number,newInfo:INote)=>{
-    const note = noteModel.update({id},{newInfo})
+export const createNote = (data:INote)=>{
+    const note = noteModel.create(data)
+    return note
+}
+
+export const updateNote = (id:number,newData:INoteDraft)=>{
+    const note = noteModel.update({id},{newData})
     return note
 };
 
@@ -109,17 +129,22 @@ export const findAllCards = ()=>{
     return cards
 }
 
-const findCard = (id:number)=>{
+export const findCard = (id:number)=>{
     const card = cardModel.findOne({id})
     return card
 }
 
-export const updateCard = (id: number, newInfo: INote) => {
-    const note = cardModel.update({ id }, { newInfo });
-    return note;
+export const createCard = (data:ICard) =>{
+    const card = cardModel.create(data)
+    return card
+}
+
+export const updateCard = (id: number, newData: ICardDraft) => {
+    const card = cardModel.update({ id }, { newData });
+    return card;
 };
 
 export const deleteCard = (id: number) => {
-    const note = cardModel.remove({ id });
-    return note;
+    const card = cardModel.remove({ id });
+    return card;
 };

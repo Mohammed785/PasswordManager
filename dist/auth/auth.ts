@@ -24,7 +24,7 @@ export const register = async (db:Model<LooseObject>,username:string,password:st
         return;
     }
     const hashedPassword = Password.hashMasterPassword(password)
-    const user = await createUser(db,username,hashedPassword);
+    const user = await createUser(username,hashedPassword);
     if(!user){
         sendMsg("Error Occurred While Saving Info Please Try Again Later")
         return;

@@ -22,3 +22,5 @@ export interface ICard {
 }
 
 export interface IPasswordDraft extends Partial<IPassword> {}
+export interface ICardDraft extends Partial<ICard> {}
+export interface INoteDraft extends Partial<INote> {}
