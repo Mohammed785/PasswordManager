@@ -1,7 +1,7 @@
 import {config} from "dotenv"
 config()
 import { app, BrowserWindow, ipcMain, IpcMainEvent, dialog } from "electron";
-import { connectDB, createModel, getPassword, createPassword, updatePassword, deletePassword } from "./db";
+import { connectDB, createModel, getPassword, createPassword, updatePassword, deletePassword, getAllPasswords } from "./db";
 import { login, register } from "./auth";
 import { LooseObject, Model, Trilogy } from "trilogy";
 import { sendMsg, tryCatch } from "./utils";
@@ -37,8 +37,6 @@ const createWindow = () => {
             safeDialogs: true,
         },
     });
-    console.log();
-    
     authWin.loadFile(join(__dirname, "..", "static", "html", "login.html"));
 };
 
@@ -95,7 +93,11 @@ ipcMain.on("register",async(event,username,password)=>{
         sendMsg("Error Occurred!!! While Saving Your Info Try Again Please")
     }
 })
-
+ipcMain.on("getAllPasswords",tryCatch(async (event:IpcMainEvent)=>{
+        const data = await getAllPasswords();
+        event.reply("gotAllPasswords",data)
+    })
+)
 ipcMain.on("getPasswords",tryCatch(async (event: IpcMainEvent, arg: any) => {
         const data = await getPassword(arg);
         event.reply("gotPassword", data);

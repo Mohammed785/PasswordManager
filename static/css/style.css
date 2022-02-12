@@ -69,12 +69,14 @@ body {
     list-style: none;
     text-align: center;
     overflow: hidden;
-    width: 100%;
+    width: 75vw;
 }
 
 .sections  ul li {
     display: inline-block;
-    padding: 0.5rem 7.9rem;
+    /* padding: 0.5rem 7.9rem; */
+    padding: 0.5rem 0;
+    width: 33%;
     background-color: var(--color-shadow);
     color: var(--dark-main);
     cursor: pointer;

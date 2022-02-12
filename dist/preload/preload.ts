@@ -2,7 +2,7 @@ import {contextBridge, ipcRenderer} from "electron";
 import { IPassword,IPasswordDraft,ICard,ICardDraft,INote,INoteDraft } from "../@types";
 
 contextBridge.exposeInMainWorld("password",{
-    getAll:()=>ipcRenderer.send("getAll"),
+    getAll:()=>ipcRenderer.send("getAllPasswords"),
     getPassword:(id:number)=>ipcRenderer.send("getPasswords",id),
     createPassword:(data:IPassword)=>ipcRenderer.send("createPassword",data),
     updatePassword:(id:number,newData:IPasswordDraft)=>ipcRenderer.send("updatePassword",id,newData),
@@ -27,21 +27,81 @@ contextBridge.exposeInMainWorld("credit",{
     deleteCard:(id:number)=>ipcRenderer.send("DeleteCard",id)
 });
 
+contextBridge.exposeInMainWorld("utils",{
+
+})
+
+// events
+//  password
+ipcRenderer.on("gotAllPasswords",(event,data)=>{
+
+})
+
 ipcRenderer.on("gotPassword",(event,data)=>{
     
 });
 
-ipcRenderer.on("created",(event,data)=>{
+ipcRenderer.on("createdPassword",(event,data)=>{
     
 });
 
-ipcRenderer.on("updated",(event,data)=>{
+ipcRenderer.on("updatedPassword",(event,data)=>{
     
 })
-ipcRenderer.on("deleted",(event,data)=>{
+ipcRenderer.on("deletedPassword",(event,data)=>{
     
 })
 
-ipcRenderer.on("Error",(event,error)=>{
+ipcRenderer.on("error",(event,error)=>{
+    
+})
+ipcRenderer.on("success",(event,error)=>{
+    
+})
+// note
+ipcRenderer.on("gotAllNotes",(event,data)=>{
+
+})
+
+ipcRenderer.on("gotNote",(event,data)=>{
+    
+});
+
+ipcRenderer.on("createdNote",(event,data)=>{
+    
+});
+
+ipcRenderer.on("updatedNote",(event,data)=>{
+    
+})
+ipcRenderer.on("deletedNote",(event,data)=>{
+    
+})
+
+//bank
+ipcRenderer.on("gotAllCredits",(event,data)=>{
+
+})
+
+ipcRenderer.on("gotCredit",(event,data)=>{
+    
+});
+
+ipcRenderer.on("createdCredit",(event,data)=>{
+    
+});
+
+ipcRenderer.on("updatedCredit",(event,data)=>{
+    
+})
+ipcRenderer.on("deletedCredit",(event,data)=>{
+    
+})
+
+ipcRenderer.on("error",(event,error)=>{
+    
+})
+
+ipcRenderer.on("success",(event,error)=>{
     
 })

@@ -5,7 +5,7 @@ export const tryCatch = (fn: Function) => {
         try {
             await fn(event, ...args);
         } catch (error) {
-            event.reply("Error", error);
+            event.reply("error", error);
         }
     };
 };
