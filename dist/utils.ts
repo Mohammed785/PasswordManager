@@ -1,4 +1,4 @@
-import { ipcMain, IpcMainEvent } from "electron";
+import { IpcMainEvent,BrowserWindow } from "electron";
 
 export const tryCatch = (fn: Function) => {
     return async (event: IpcMainEvent, ...args: any[]) => {
@@ -11,7 +11,7 @@ export const tryCatch = (fn: Function) => {
 };
 
 export const sendMsg = (msg:string,isError=true) => {
-    console.error(msg);
-    if(isError)ipcMain.emit("Error",msg)
-    else ipcMain.emit("success",msg)
+    const window = BrowserWindow.getFocusedWindow()
+    if(isError)window?.webContents.send("error",msg)
+    else window?.webContents.send("success",msg)
 }

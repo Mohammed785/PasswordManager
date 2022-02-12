@@ -1,8 +1,7 @@
-import { Crypto } from "../password/crypto";
-import { Password } from "../password/password";
+import { Crypto } from "./Security/crypto";
 import { Model,LooseObject } from "trilogy";
-import { sendMsg } from "../utils";
-import { createUser } from "../db";
+import { sendMsg } from "./utils";
+import { createUser } from "./db";
 
 export const login = async (db: Model<LooseObject>,username: string,password: string) => {
     const user = await db.findOne({ username });
@@ -10,7 +9,7 @@ export const login = async (db: Model<LooseObject>,username: string,password: st
         sendMsg("Wrong Credentials");
         return;
     }
-    if (!Password.checkMasterPassword(password, user.password)) {
+    if (!Crypto.checkMasterPassword(password, user.password)) {
         sendMsg("Wrong Credentials");
         return;
     }
@@ -23,7 +22,7 @@ export const register = async (db:Model<LooseObject>,username:string,password:st
         sendMsg("User Already Exists");
         return;
     }
-    const hashedPassword = Password.hashMasterPassword(password)
+    const hashedPassword = Crypto.hashMasterPassword(password)
     const user = await createUser(username,hashedPassword);
     if(!user){
         sendMsg("Error Occurred While Saving Info Please Try Again Later")

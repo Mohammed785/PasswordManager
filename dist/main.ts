@@ -2,7 +2,7 @@ import {config} from "dotenv"
 config()
 import { app, BrowserWindow, ipcMain, IpcMainEvent, dialog } from "electron";
 import { connectDB, createModel, getPassword, createPassword, updatePassword, deletePassword } from "./db";
-import { login, register } from "./auth/auth";
+import { login, register } from "./auth";
 import { LooseObject, Model, Trilogy } from "trilogy";
 import { sendMsg, tryCatch } from "./utils";
 import { join } from "path";
@@ -21,7 +21,7 @@ const createWindow = () => {
         center: true,
         show:false,
         webPreferences: {
-            preload: join(__dirname, "preload.js"),
+            preload: join(__dirname,"preload", "preload.js"),
             nodeIntegration: true,
             safeDialogs: true,
         },
@@ -32,11 +32,13 @@ const createWindow = () => {
         height: 900,
         center: true,
         webPreferences: {
-            preload: join(__dirname, "auth", "authPreload.js"),
+            preload: join(__dirname,"preload","authPreload.js"),
             nodeIntegration: true,
             safeDialogs: true,
         },
     });
+    console.log();
+    
     authWin.loadFile(join(__dirname, "..", "static", "html", "login.html"));
 };
 
@@ -69,7 +71,9 @@ ipcMain.on("login",async (event,username,password)=>{
         BrowserWindow.getAllWindows()[0].hide()
         BrowserWindow.getAllWindows()[1].show()
         currentUser = user;
-        sendMsg(`Welcome Back ${user.username}`)
+        sendMsg(`Welcome Back ${user.username}`,false)
+    }else{
+        sendMsg("Wrong Credentials")
     }
 })
 
@@ -87,6 +91,8 @@ ipcMain.on("register",async(event,username,password)=>{
     if(user){
         BrowserWindow.getAllWindows()[0].loadFile(join(__dirname,"..","static","html","login.html"))
         sendMsg("Account Created You can login", false);
+    }else{
+        sendMsg("Error Occurred!!! While Saving Your Info Try Again Please")
     }
 })
 
@@ -123,7 +129,7 @@ app.whenReady().then(async () => {
         passwordModel = await db.getModel("Password");
         userModel = await db.getModel("User");
         noteModel = await db.getModel("Note");
-        cardModel = await db.getModel("Card");
+        cardModel = await db.getModel("Credit");
     } catch (error) {
         console.log(error);
     }

@@ -25,4 +25,14 @@ export class Crypto{
         const decipher = createDecipheriv("aes-128-cbc",key,iv);
         return decipher
     }
+    static hashMasterPassword(password:string){
+        const key = this.createPBKDF2Key(password);
+        const hashedPass = key.toString("base64");
+        return hashedPass;
+    }
+    static checkMasterPassword(password:string,hashedPassword:string){
+        const key = Buffer.from(hashedPassword,"base64");
+        const enteredKey = this.createPBKDF2Key(password);
+        return key.toString("base64") === enteredKey.toString("base64");
+    }
 }

@@ -1,5 +1,5 @@
 import {contextBridge, ipcRenderer} from "electron";
-import { IPassword,IPasswordDraft,ICard,ICardDraft,INote,INoteDraft } from "./@types";
+import { IPassword,IPasswordDraft,ICard,ICardDraft,INote,INoteDraft } from "../@types";
 
 contextBridge.exposeInMainWorld("password",{
     getAll:()=>ipcRenderer.send("getAll"),
