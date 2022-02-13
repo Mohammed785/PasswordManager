@@ -132,7 +132,7 @@ button:active{
 .error-msg:first-child{
   border-radius: 0 0 10px 10px;
 }
-.close {
+.error-close {
   font-weight: bold;
   float: right;
   font-size: 1.2rem;
