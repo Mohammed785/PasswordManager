@@ -7,10 +7,10 @@ submitBtn.addEventListener("click", (e) => {
     const username = usernameInp.value;
     const password = passwordInp.value;
     if (!username || !password) {
-        window.auth.showMsg("Please Enter Both Username And Password");
+        window.utils.showMsg("Please Enter Both Username And Password");
         return;
     }
-    if ((e.target).name === "login") {
+    if (e.target.name === "login") {
         window.auth.login(username, password);
     } else {
         window.auth.register(username, password);

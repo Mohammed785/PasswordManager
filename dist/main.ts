@@ -70,8 +70,6 @@ ipcMain.on("login",async (event,username,password)=>{
         BrowserWindow.getAllWindows()[1].show()
         currentUser = user;
         sendMsg(`Welcome Back ${user.username}`,false)
-    }else{
-        sendMsg("Wrong Credentials")
     }
 })
 
@@ -106,7 +104,8 @@ ipcMain.on("getPasswords",tryCatch(async (event: IpcMainEvent, arg: any) => {
 
 ipcMain.on("createPassword",tryCatch(async (event: IpcMainEvent, arg: any) => {
         const newPass = await createPassword(arg);
-        event.reply("created", newPass);
+        sendMsg("Password Created Successfully", false);
+        event.reply("createdPassword", newPass);
     })
 );
 
