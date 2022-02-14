@@ -119,9 +119,10 @@ ipcMain.on("updatePassword",tryCatch(async (event: IpcMainEvent, oldPass: any, n
     })
 );
 
-ipcMain.on("deletePassword",tryCatch(async (event: IpcMainEvent, arg: any) => {
-        const deleted = await deletePassword(arg);
-        event.reply("deleted", deleted);
+ipcMain.on("deletePassword",tryCatch(async (event: IpcMainEvent, id:number) => {
+        const deleted = await deletePassword(id);
+        sendMsg("Password Deleted",false);
+        event.reply("deletedPassword", deleted);
     })
 );
 app.whenReady().then(async () => {

@@ -1,34 +1,56 @@
 const dataSection = document.querySelector('.data-section');
+const dataListSection = document.querySelector('.data-list-section');
 const sections = document.querySelectorAll('.section');
+
 let inputs;
 let btns;
 let closeBtn;
 let createBtn;
-
+let items;
 let currentView = null;
 let current = null;
 
-const queryDocument = (selectItem=true)=>{
-    if(selectItem){
-        inputs = document.querySelectorAll('.input')
-        closeBtn = document.querySelector(".close");
+const queryDocument = (selectedItem=false)=>{
+    inputs = document.querySelectorAll('.input')
+    if(selectedItem){
         btns = document.querySelectorAll(".btn");
         addEventToBtns();
     }else{
         createBtn = document.getElementById("create")
         createBtn.addEventListener("click",e=>{
             if (currentView === "password") {
-                const data = getInput((password = true));
-                window.password.create(data);
+                const data = getInput(true)
+                const validated = validate(data,true);
+                if(!validated)return window.utils.showMsg("Please Check Your Input!!! And Try Again",true)
+                window.password.createPassword(data);
             } else if (currentView === "note") {
-                const data = getInput((note = true));
-                window.note.create(data);
+                const data = getInput(false,note = true,false);
+                window.note.createNote(data);
             } else if (currentView === "credit") {
-                const data = getInput((credit = true));
-                window.credit.create(data);
+                const data = getInput(false,false,credit = true);
+                window.credit.createCredit(data);
             }
         })
     }
+}
+const queryItems = ()=>{
+    items = document.querySelectorAll(".item");
+    items.forEach((item) => {
+        item.addEventListener("click", (e) => {
+            if (currentView === "password")window.password.getPassword(e.target.id);
+            else if (currentView === "note") window.note.getNote(e.target.id);
+            else if (currentView === "credit")window.credit.getCard(e.target.id);
+            queryDocument(true)
+        });
+    });
+}
+const validate = (obj,create=false)=>{
+    for (const [prop, value] of Object.entries(obj)) {
+        if (!value) {
+            if (create) return false;
+        }
+    }
+    return true
 }
 
 const getInput = (password=false,note=false,credit=false)=>{
@@ -57,113 +79,66 @@ const getInput = (password=false,note=false,credit=false)=>{
 const addEventToBtns = ()=>{
     btns.forEach((btn) => {
         btn.addEventListener("click", (e) => {
-            const id = e.target.id;
-            if(id==='delete'){
-                const id = e.target.dataset.id
+            const btnId = e.target.id;
+            console.log(e.target);
+            if (btnId === "delete") {
+                const id = e.target.dataset.id;
                 if (currentView === "password") {
+                    console.log(id);
                     window.password.deletePassword(id);
                 } else if (currentView === "note") {
                     window.note.deleteNote(id);
                 } else if (currentView === "credit") {
                     window.credit.deleteCard(id);
                 }
-            }else if(id==="update"){
+            } else if (btnId === "update") {
                 const id = e.target.dataset.id;
                 if (currentView === "password") {
-                    const newData = getInput(password=true)
-                    window.password.updatePassword(id,newData);
+                    const newData = getInput((password = true));
+                    window.password.updatePassword(id, newData);
                 } else if (currentView === "note") {
-                    const newData = getInput(note = true);
-                    window.note.updateNote(id,newData);
+                    const newData = getInput((note = true));
+                    window.note.updateNote(id, newData);
                 } else if (currentView === "credit") {
-                    const newData = getInput(credit = true);
-                    window.credit.updateCard(id,newData);
+                    const newData = getInput((credit = true));
+                    window.credit.updateCard(id, newData);
                 }
             }
         });
     });
-    closeBtn.addEventListener("click",e=>{
-        if (currentView === "password") {
-            dataSection.innerHTML = passwordMain;
-        } else if (currentView === "note") {
-            dataSection.innerHTML = noteMain;
-        } else if (currentView === "bank") {
-            dataSection.innerHTML = bankMain;
-        }
-    })
+    setTimeout(()=>{
+        closeBtn = document.querySelector(".close");
+        closeBtn.addEventListener("click",e=>{
+            if (currentView === "password") {
+                dataSection.innerHTML = window.password.getTemplate();
+            } else if (currentView === "note") {
+                dataSection.innerHTML = window.note.getTemplate();
+            } else if (currentView === "bank") {
+                dataSection.innerHTML = window.bank.getTemplate();
+            }
+        })
+    },100) 
 }
 
 sections.forEach(section=>{
     section.addEventListener("click",e=>{
-        const name=e.target.name;
-        if(name==="passwords"){
-            currentView = 'password'
-            dataSection.innerHTML = passwordMain;
+        const ID=e.target.id;
+        if(ID==="passwords"){
+            currentView = 'password';
+            window.password.getAll();
+            dataSection.innerHTML = window.password.getTemplate();
         }
-        else if(name==='notes'){
-            currentView = 'note'
-            dataSection.innerHTML = noteMain;
+        else if(ID==='notes'){
+            currentView = 'note';
+            data = window.credit.getAll();
+            dataSection.innerHTML = window.note.getTemplate();
         }
-        else if(name==='bank'){
-            currentView = 'bank'
-            dataSection.innerHTML = bankMain;
+        else if(ID==='bank'){
+            currentView = 'bank';
+            data = window.note.getAll();
+            dataSection.innerHTML = window.credit.getTemplate();
         }
+        queryDocument()
+        setTimeout(queryItems,100)
     })
 })
-
-//UI
-const colors = document.querySelectorAll(".color");
-const toggleBtn = document.getElementsByTagName("svg")[0];
-toggleBtn.addEventListener("click",(e)=>{
-    document.body.classList.toggle("light-mode")
-})
-colors.forEach((color) => {
-    color.addEventListener("click", (e) => {
-        const theme = color.getAttribute("data-color");
-        console.log(theme);
-        document.body.setAttribute("data-theme", theme);
-    });
-});
-
-// main page html template
-const passwordMain = `<div class="input-section">
-                <select name="platform" id="platform" class="input" required>
-                    <option value="Facebook">Facebook</option>
-                    <option value="Instagram">Instagram</option>
-                    <option value="Google">Google</option>
-                    <option value="Apple">Apple</option>
-                    <option value="Github">Github</option>
-                    <option value="StackOverflow">StackOverflow</option>
-                    <option value="Slack">Slack</option>
-                    <option value="Discord">Discord</option>
-                    <option value="Netflix">Netflix</option>
-                    <option value="Amazon">Amazon</option>
-                    <option value="Disney+">Disney+</option>
-                    <option value="HBO">HBO</option>
-                </select>
-                <input type="text" class="input" placeholder="Username or Email" name="username" id="username" required>
-                <input type="password" class="input" placeholder="Password" name="password" id="password" required>
-            </div>
-            <div class="btn-section">
-                <button class="btn" id="create">Create</button>
-            </div>`;
-const bankMain = `<div class="input-section">
-                <select name="company" id="compeny" class="input" required>
-                    <option value="MasterCard">MasterCard</option>
-                    <option value="Visa">Visa</option>
-                    <option value="AmericanExpress">AmericanExpress</option>
-                </select>
-                <input type="text" class="input" placeholder="Card Number" name="cardNumber" id="cardNumber" required>
-                <input type="date" class="input" placeholder="Expire Date" name="expDate" id="expDate" required>
-                <input type="text" class="input" placeholder="CVV" name="cvv" id="cvv"  maxlength="3" required>
-            </div>
-            <div class="btn-section">
-                <button class="btn" id="create">Create</button>
-            </div>`;
-const noteMain = `<div class="input-section">
-                <input type="text" class="input" placeholder="Title for the note" name="title" id="noteTitle" required>
-                <textarea name="note" id="noteBody" placeholder="Note" cols="30" rows="10"></textarea>
-            </div>
-            <div class="btn-section">
-                <button class="btn" id="create">Create</button>
-            </div>`;

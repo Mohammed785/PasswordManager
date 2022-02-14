@@ -4,17 +4,20 @@ export interface IUser {
 }
 
 export interface IPassword {
+    id?: number
     platform: string;
     username: string;
     password: string;
 }
 
 export interface INote {
+    id?: number
     title: string;
     note: string;
 }
 
 export interface ICard {
+    id?: number
     company: string;
     cardNumber: string;
     ExpDate: Date;
