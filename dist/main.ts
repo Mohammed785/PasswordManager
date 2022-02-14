@@ -6,6 +6,7 @@ import { login, register } from "./auth";
 import { LooseObject, Model, Trilogy } from "trilogy";
 import { sendMsg, tryCatch } from "./utils";
 import { join } from "path";
+import { INote, IPassword, IPasswordDraft } from "./@types";
 
 export let passwordModel: Model<LooseObject>;
 export let userModel: Model<LooseObject>;
@@ -63,7 +64,7 @@ ipcMain.on("load-register",()=>{
     BrowserWindow.getAllWindows()[0].loadFile(join(__dirname,"..","static","html","register.html"))
 })
 
-ipcMain.on("login",async (event,username,password)=>{
+ipcMain.on("login",tryCatch(async (event:IpcMainEvent,username:string,password:string)=>{
     const user = await login(userModel,username,password)
     if(user){
         BrowserWindow.getAllWindows()[0].hide()
@@ -71,7 +72,7 @@ ipcMain.on("login",async (event,username,password)=>{
         currentUser = user;
         sendMsg(`Welcome Back ${user.username}`,false)
     }
-})
+}))
 
 ipcMain.on("logout",(event)=>{
     if(!currentUser){
@@ -96,14 +97,17 @@ ipcMain.on("getAllPasswords",tryCatch(async (event:IpcMainEvent)=>{
         event.reply("gotAllPasswords",data)
     })
 )
-ipcMain.on("getPasswords",tryCatch(async (event: IpcMainEvent, arg: any) => {
-        const data = await getPassword(arg);
-        event.reply("gotPassword", data);
+ipcMain.on("getPasswords",tryCatch(async (event: IpcMainEvent, id: number) => {
+        const password = await getPassword(id);
+        if(!password){
+            return sendMsg("Password Not Found")
+        }
+        event.reply("gotPassword", password);
     })
 );
 
-ipcMain.on("createPassword",tryCatch(async (event: IpcMainEvent, arg: any) => {
-        const newPass = await createPassword(arg);
+ipcMain.on("createPassword",tryCatch(async (event: IpcMainEvent, password:IPassword) => {
+        const newPass = await createPassword(password);
         sendMsg("Password Created Successfully", false);
         event.reply("createdPassword", newPass);
     })

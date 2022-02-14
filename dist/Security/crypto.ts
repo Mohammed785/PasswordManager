@@ -1,4 +1,7 @@
 import {randomBytes,pbkdf2Sync,createCipheriv,createDecipheriv} from "crypto";
+import { IPassword } from "../@types";
+import { currentUser } from "../main";
+import { sendMsg } from "../utils";
 
 export class Crypto{
     static createSaltAndIV(bytes:number=16){
@@ -17,13 +20,26 @@ export class Crypto{
         const encryptedData:Buffer = cipher.read();
         return {
             encrypted: encryptedData.toString("base64"),
-            concatenated: Buffer.concat([iv,key,encryptedData]).toString("base64")
+            concatenated: Buffer.concat([iv,encryptedData]).toString("base64")
         };
     };
     static decipherData(encrypted:string,key:string,bytesLen:number=16){
         const iv = key.slice(0,bytesLen);
         const decipher = createDecipheriv("aes-128-cbc",key,iv);
         return decipher
+    }
+    static getUserKey(){
+        if(currentUser){
+            return currentUser.password
+        }
+        sendMsg("Something Went Wrong!!! Try Again Later")
+    }
+    static hashPassword(password:IPassword){
+        const {iv} = this.createSaltAndIV(16)
+        const key = this.getUserKey()
+        password.password = this.cipherData(password.password,Buffer.from(key,"base64"),iv).concatenated
+        console.log("worked",password);
+        return password
     }
     static hashMasterPassword(password:string){
         const key = this.createPBKDF2Key(password);

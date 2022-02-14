@@ -24,4 +24,4 @@ const clearMsg = setInterval(() => {
     if(!first && errorArea.children.length===0){
         clearInterval(clearMsg)
     }
-},2000);
+},2300);

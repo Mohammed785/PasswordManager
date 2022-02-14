@@ -1,7 +1,8 @@
 import { connect, Trilogy, SchemaRaw } from "trilogy";
 import { ICard, ICardDraft, INote, INoteDraft, IPassword, IPasswordDraft } from "./@types";
-import { join } from "path";
 import { userModel, passwordModel, noteModel, cardModel } from "./main"
+import { join } from "path";
+import { Crypto } from "./Security/crypto"
 
 //Schemas
 const UserSchema: SchemaRaw = {
@@ -63,6 +64,7 @@ export const getPassword = (id: number) => {
 };
 
 export const createPassword = (data: IPassword) => {
+    data = Crypto.hashPassword(data)
     const password = passwordModel.create(data);
     return password;
 };

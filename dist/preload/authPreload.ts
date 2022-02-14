@@ -10,7 +10,7 @@ contextBridge.exposeInMainWorld("auth", {
 });
 
 contextBridge.exposeInMainWorld("utils",{
-    showMsg:(msg:string,isError:boolean)=>{showMsg(msg,isError)}
+    showMsg:(msg:string,isError:boolean)=>showMsg(msg,isError)
 });
 
 ipcRenderer.on("error",(event,msg)=>{
