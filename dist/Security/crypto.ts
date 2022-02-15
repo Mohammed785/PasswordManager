@@ -38,7 +38,6 @@ export class Crypto{
         const {iv} = this.createSaltAndIV(16)
         const key = this.getUserKey()
         password.password = this.cipherData(password.password,Buffer.from(key,"base64"),iv).concatenated
-        console.log("worked",password);
         return password
     }
     static hashMasterPassword(password:string){

@@ -50,13 +50,13 @@ const checkUndefined = (data:Array<any>)=>{
 //  password
 ipcRenderer.on("gotAllPasswords",(event,data)=>{
     if(!checkUndefined(data)){
-        dataListSection.innerHTML = `<p class='not-found'>Nothing To Show</p>`;
+        dataList.innerHTML = `<p class='not-found'>Nothing To Show</p>`;
         return
     }
     const newData = data.map((password:IPassword)=>{
         return passwordTemplate(password, true).split("\n").join("");
     })
-    dataListSection.innerHTML = `<ul class="list">${newData.join("")}</ul>`
+    dataList.innerHTML = newData.join("")
 })
 
 ipcRenderer.on("gotPassword",(event,password:IPassword)=>{
@@ -71,9 +71,9 @@ ipcRenderer.on("createdPassword",(event,data:IPassword)=>{
 ipcRenderer.on("updatedPassword",(event,data)=>{
     
 })
-ipcRenderer.on("deletedPassword",(event,password)=>{
-    const child = document.getElementById(password.id)!;
-    dataList.removeChild(child)
+ipcRenderer.on("deletedPassword",(event,id)=>{
+    const child = document.getElementById(id)!;
+    dataList.removeChild(child);
 })
 
 // note

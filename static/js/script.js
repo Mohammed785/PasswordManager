@@ -13,8 +13,7 @@ let current = null;
 const queryDocument = (selectedItem=false)=>{
     inputs = document.querySelectorAll('.input')
     if(selectedItem){
-        btns = document.querySelectorAll(".btn");
-        addEventToBtns();
+        setTimeout(addEventToBtns,100);
     }else{
         createBtn = document.getElementById("create")
         createBtn.addEventListener("click",e=>{
@@ -30,6 +29,8 @@ const queryDocument = (selectedItem=false)=>{
                 const data = getInput(false,false,credit = true);
                 window.credit.createCredit(data);
             }
+            setTimeout(queryItems,100)
+            document.querySelector(".not-found").remove()
         })
     }
 }
@@ -77,15 +78,16 @@ const getInput = (password=false,note=false,credit=false)=>{
     return data;
 }
 const addEventToBtns = ()=>{
+    btns = document.querySelectorAll(".btn");
     btns.forEach((btn) => {
         btn.addEventListener("click", (e) => {
             const btnId = e.target.id;
-            console.log(e.target);
             if (btnId === "delete") {
                 const id = e.target.dataset.id;
                 if (currentView === "password") {
-                    console.log(id);
                     window.password.deletePassword(id);
+                    dataSection.innerHTML = window.password.getTemplate();
+                    queryDocument()
                 } else if (currentView === "note") {
                     window.note.deleteNote(id);
                 } else if (currentView === "credit") {
