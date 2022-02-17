@@ -32,11 +32,13 @@ contextBridge.exposeInMainWorld("credit",{
 });
 
 contextBridge.exposeInMainWorld("utils",{
-    showMsg:(msg:string,isError:boolean)=>showMsg(msg,isError)
+    showMsg:(msg:string,isError:boolean)=>showMsg(msg,isError),
+    getCurrent:()=>current
 })
 let dataListSection:HTMLDivElement;
 let dataSection:HTMLDivElement;
 let dataList:HTMLUListElement;
+let current:ICard|IPassword|INote;
 // events
 window.onload = ()=>{
     dataListSection =  document.querySelector(".data-list-section")!;
@@ -62,6 +64,7 @@ ipcRenderer.on("gotAllPasswords",(event,data)=>{
 ipcRenderer.on("gotPassword",(event,password:IPassword)=>{
     const temp = passwordTemplate(password);
     dataSection.innerHTML = temp;
+    current = password
 });
 
 ipcRenderer.on("createdPassword",(event,data:IPassword)=>{
@@ -69,7 +72,8 @@ ipcRenderer.on("createdPassword",(event,data:IPassword)=>{
 });
 
 ipcRenderer.on("updatedPassword",(event,data)=>{
-    
+    current = data
+    showMsg("Password Updated Successfully",false)
 })
 ipcRenderer.on("deletedPassword",(event,id)=>{
     const child = document.getElementById(id)!;
@@ -158,8 +162,9 @@ const passwordMain:string = `<div class="input-section">
                 <input type="text" class="input" placeholder="Username or Email" name="username" id="username" required>
                 <input type="password" class="input" placeholder="Password" name="password" id="password" required>
             </div>`;
+
 const bankMain:string = `<div class="input-section">
-                <select name="company" id="compeny" class="input" required>
+                <select name="company" id="company" class="input" required>
                     <option value="MasterCard">MasterCard</option>
                     <option value="Visa">Visa</option>
                     <option value="AmericanExpress">AmericanExpress</option>
@@ -168,6 +173,7 @@ const bankMain:string = `<div class="input-section">
                 <input type="date" class="input" placeholder="Expire Date" name="expDate" id="expDate" required>
                 <input type="text" class="input" placeholder="CVV" name="cvv" id="cvv"  maxlength="3" required>
             </div>`;
+
 const noteMain:string = `<div class="input-section">
                 <input type="text" class="input" placeholder="Title for the note" name="title" id="noteTitle" required>
                 <textarea name="note" id="noteBody" placeholder="Note" cols="30" rows="10"></textarea>

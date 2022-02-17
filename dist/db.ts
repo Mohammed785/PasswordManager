@@ -39,8 +39,7 @@ export const connectDB = () => {
 export const createModel = (db: Trilogy) => {
     const passwordModel = db.model("Password", PasswordSchema, {
         index: "platform",
-        unique: ["platform", "username"],
-        timestamps: true,
+        unique: ["platform", "username"]
     });
     const userModel = db.model("User", UserSchema, {
         index: "username",
@@ -69,7 +68,7 @@ export const createPassword = (data: IPassword) => {
     return password;
 };
 
-export const updatePassword = (id:number,newData: IPasswordDraft) => {
+export const updatePassword = (id:number,newData: IPassword) => {
     const updated = passwordModel.update({id}, newData);
     return updated;
 };

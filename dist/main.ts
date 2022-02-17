@@ -113,9 +113,9 @@ ipcMain.on("createPassword",tryCatch(async (event: IpcMainEvent, password:IPassw
     })
 );
 
-ipcMain.on("updatePassword",tryCatch(async (event: IpcMainEvent, oldPass: any, newPass: any) => {
-        const updated = await updatePassword(oldPass, newPass);
-        event.reply("updated", updated);
+ipcMain.on("updatePassword",tryCatch(async (event: IpcMainEvent, id: number, newPass: IPassword) => {
+        const updated = await updatePassword(id, newPass);
+        event.reply("updatedPassword", updated);
     })
 );
 
