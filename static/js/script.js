@@ -6,7 +6,9 @@ let inputs;
 let btns;
 let closeBtn;
 let createBtn;
+let copyBtns;
 let items;
+let updating = false;
 let currentView = null;
 
 // query
@@ -14,6 +16,8 @@ const queryDocument = (selectedItem=false)=>{
     if(selectedItem){
         setTimeout(addEventToBtns,100);
         setTimeout(setInputValues,100)
+        setTimeout(changeInputState, 100);
+        updating = false
     }else{
         inputs = document.querySelectorAll('.input')
         createBtn = document.getElementById("create")
@@ -117,9 +121,20 @@ const getInput = (password = false, note = false, credit = false) => {
     return data;
 };
 
+const changeInputState = (add=true) => {
+    inputs.forEach(inp=>{
+        if (add) {
+            inp.readOnly = true
+        } else {
+            inp.readOnly = false
+        }
+    })
+}
+
 // eventListener
 const addEventToBtns = ()=>{
     btns = document.querySelectorAll(".btn");
+    copyBtns = document.querySelectorAll(".copy");
     btns.forEach((btn) => {
         btn.addEventListener("click", (e) => {
             const btnId = e.target.id;
@@ -137,9 +152,16 @@ const addEventToBtns = ()=>{
             } else if (btnId === "update") {
                 const id = e.target.dataset.id;
                 if (currentView === "password") {
-                    const newData = getInput(password = true);
-                    window.password.updatePassword(id, newData);
-                    setTimeout(()=>showUpdatedData(true,false,false),100)
+                    if(updating){
+                        const newData = getInput(password = true);
+                        window.password.updatePassword(id, newData);
+                        setTimeout(()=>showUpdatedData(true,false,false),300)
+                        updating = false
+                        changeInputState()
+                    }else{
+                        changeInputState(false)
+                        updating = true
+                    }
                 } else if (currentView === "note") {
                     const newData = getInput(note = true);
                     window.note.updateNote(id, newData);
@@ -150,6 +172,11 @@ const addEventToBtns = ()=>{
             }
         });
     });
+    copyBtns.forEach(btn=>{
+        btn.addEventListener("click",e=>{
+            navigator.clipboard.writeText(btn.previousSibling.previousSibling.value);
+        })
+    })
     setTimeout(()=>{
         closeBtn = document.querySelector(".close");
         closeBtn.addEventListener("click",e=>{

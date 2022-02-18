@@ -151,13 +151,16 @@ body {
     flex-direction: column;
     margin: 13% 0;
 }
+.input-group {
+    display: flex;
+    margin: 0.453rem 0;
+}
 
-.input-section input,select {
+.input-group input,select {
     display: block;
     width: 45vw;
     padding: 0.5rem 0.6rem;
-    margin: 0.313rem 0;
-    border-radius: 1.25rem;
+    border-radius: 1.07rem;
     outline: none;
     line-height: 1.875rem;
     background: transparent;
@@ -178,20 +181,58 @@ body {
     transition: all 0.4s ease;
 }
 
-.input-section input:hover,select {
+input:read-only {
+    cursor: pointer;
+}
+
+select {
+    border-radius: 0.9rem;
+    padding: 0.8rem 0.6rem;
+    margin-right: 35px;
+    cursor: pointer;
+}
+
+option {
+    background-color: var(--color-shadow);
+    color: var(--dark-main);
+    font-size: 1.2rem;
+    border-bottom: 1px solid var(--dark-main);
+}
+option:checked {
+    font-size: 1.35rem;
+    background-color: var(--bgColor2);
+}
+
+.input-group input:hover {
     background: var(--color-shadow);
     padding: 0.625rem 0.25rem;
 }
-.input-section input:focus,select {
+.input-group input:focus {
     box-shadow: 6px 6px 15px var(--color-shadow),
         -6px -6px 15px var(--color-light);
     color: var(--light-main);
 }
-.input-section input::placeholder,select {
+.input-group input::placeholder {
     color: var(--dark-main);
 }
-.input-section input:hover::placeholder,select {
+.input-group input:hover::placeholder {
     color: var(--light-main);
+}
+
+.copy {
+    width: 20px;
+    margin: 0 0 0 15px;
+    fill: var(--dark-main);
+    stroke: var(--light-main);
+    opacity: 0;
+}
+
+.copy:hover {
+    opacity: 1;
+}
+
+.input:hover + .copy {
+    opacity: 1;
 }
 
 .btn {

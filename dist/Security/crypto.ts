@@ -23,10 +23,13 @@ export class Crypto{
             concatenated: Buffer.concat([iv,encryptedData]).toString("base64")
         };
     };
-    static decipherData(encrypted:string,key:string,bytesLen:number=16){
+    static decipherData(encrypted:string,key:Buffer,bytesLen:number=16){
         const iv = key.slice(0,bytesLen);
-        const decipher = createDecipheriv("aes-128-cbc",key,iv);
-        return decipher
+        const decipher = createDecipheriv("aes-256-cbc",key,iv);
+        decipher.write(encrypted)
+        decipher.end()
+        const decrypted = decipher.read()
+        return decrypted.toString()
     }
     static getUserKey(){
         if(currentUser){
@@ -34,7 +37,7 @@ export class Crypto{
         }
         sendMsg("Something Went Wrong!!! Try Again Later")
     }
-    static hashPassword(password:IPassword){
+    static hashPassword(password:IPassword) {
         const {iv} = this.createSaltAndIV(16)
         const key = this.getUserKey()
         password.password = this.cipherData(password.password,Buffer.from(key,"base64"),iv).concatenated

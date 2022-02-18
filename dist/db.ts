@@ -68,9 +68,12 @@ export const createPassword = (data: IPassword) => {
     return password;
 };
 
-export const updatePassword = (id:number,newData: IPassword) => {
-    const updated = passwordModel.update({id}, newData);
-    return updated;
+export const updatePassword = async(id:number,newData: IPassword) => {
+    const old = await passwordModel.findOne({id})
+    if(old!.password !== newData.password){
+        return passwordModel.update({ id }, Crypto.hashPassword(newData));
+    }
+    return passwordModel.update({id}, newData);
 };
 
 export const deletePassword = (id: number) => {
