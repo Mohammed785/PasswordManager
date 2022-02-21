@@ -1,7 +1,7 @@
 import {randomBytes,pbkdf2Sync,createCipheriv,createDecipheriv} from "crypto";
-import { IPassword } from "../@types";
-import { currentUser } from "../main";
-import { sendMsg } from "../utils";
+import { IPassword } from "./@types";
+import { currentUser } from "./main";
+import { sendMsg } from "./utils";
 
 export class Crypto{
     static createSaltAndIV(bytes:number=16){

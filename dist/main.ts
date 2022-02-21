@@ -1,13 +1,13 @@
 import {config} from "dotenv"
 config()
 import { app, BrowserWindow, ipcMain, IpcMainEvent, dialog } from "electron";
-import { connectDB, createModel, getPassword, createPassword, updatePassword, deletePassword, getAllPasswords } from "./db";
+import { connectDB, createModel, getPassword, createPassword, updatePassword, deletePassword, getAllPasswords, findAllNotes, findNote, createNote, deleteNote, updateNote } from "./db";
 import { login, register } from "./auth";
 import { LooseObject, Model, Trilogy } from "trilogy";
 import { sendMsg, tryCatch } from "./utils";
 import { join } from "path";
 import { INote, IPassword, IPasswordDraft } from "./@types";
-import { Crypto } from "./Security/crypto";
+import { Crypto } from "./crypto";
 export let passwordModel: Model<LooseObject>;
 export let userModel: Model<LooseObject>;
 export let noteModel: Model<LooseObject>;
@@ -108,6 +108,9 @@ ipcMain.on("getPasswords",tryCatch(async (event: IpcMainEvent, id: number) => {
 
 ipcMain.on("createPassword",tryCatch(async (event: IpcMainEvent, password:IPassword) => {
         const newPass = await createPassword(password);
+        if(!newPass){
+            return sendMsg("Password Creation Failed")
+        }
         sendMsg("Password Created Successfully", false);
         event.reply("createdPassword", newPass);
     })
@@ -115,6 +118,9 @@ ipcMain.on("createPassword",tryCatch(async (event: IpcMainEvent, password:IPassw
 
 ipcMain.on("updatePassword",tryCatch(async (event: IpcMainEvent, id: number, newPass: IPassword) => {
         const updated = await updatePassword(id, newPass);
+        if (!updated.length) {
+            return sendMsg("Update Failed: Password Not Found Try Again");
+        }
         event.reply("updatedPassword", updated);
     })
 );
@@ -129,6 +135,42 @@ ipcMain.on("deletePassword",tryCatch(async (event: IpcMainEvent, id:number) => {
 ipcMain.on("copyPassword",tryCatch(async (event: IpcMainEvent, password:string) => {
     event.reply("copiedPassword", Crypto.decipherData(password));
 }))
+
+ipcMain.on("getAllNotes",tryCatch(async (event:IpcMainEvent) => {
+    const notes = await findAllNotes()
+    return event.reply("gotAllNotes",notes)
+}))
+
+ipcMain.on("getNote",tryCatch(async (event:IpcMainEvent, id:number) => {
+    const note = await findNote(id)
+    return event.reply("gotNote",note)
+}))
+
+ipcMain.on("createNote",tryCatch(async (event:IpcMainEvent, note:INote) => {
+    const newNote = await createNote(note);
+    if(!newNote){
+        return sendMsg("Note Creation Failed")
+    }
+    sendMsg("Note Created Successfully",false)
+    return event.reply("createdNote",newNote)
+}))
+
+ipcMain.on("updateNote",tryCatch(async (event:IpcMainEvent, id:number, newNote: INote) => {
+    const updatedNote = await updateNote(id,newNote);
+    if(!updatedNote.length){
+        return sendMsg("Update Failed: Note Not Found Try Again");
+    }
+    return event.reply("updatedNote",updatedNote)
+}))
+
+ipcMain.on("deleteNote",tryCatch(async (event:IpcMainEvent, id:number) => {
+    const note = await deleteNote(id);
+    sendMsg("Note Deleted",false)
+    return event.reply("deletedNote",id)
+}))
+
+
+
 
 app.whenReady().then(async () => {
     try {

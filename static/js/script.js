@@ -29,6 +29,8 @@ const queryDocument = (selectedItem=false)=>{
                 window.password.createPassword(data);
             } else if (currentView === "note") {
                 const data = getInput(false,note = true,false);
+                const validated = validateInput(data,true)
+                if(!validated)return window.utils.showMsg("Please Check Your Input!!! And Try Again",true)
                 window.note.createNote(data);
             } else if (currentView === "credit") {
                 const data = getInput(false,false,credit = true);
@@ -55,12 +57,12 @@ const queryItems = () => {
 
 
 const showUpdatedData = (password,credit,note) => {
-    const currentItem = window.utils.getCurrent()[0];
+    const currentItem = window.utils.getCurrent();
     const listItemData = document.getElementById(currentItem.id);
     const img = document.querySelector(".data-img");
     if(note){
-        listItemData.children[0].innerText = `${currentItem.title.slice(0,13)}...`
-        listItemData.children[1].innerText = `${currentItem.note.slice(0, 15)}...`;
+        listItemData.children[1].children[0].innerText = `${currentItem.title.slice(0,13)}...`
+        listItemData.children[1].children[1].innerText = `${currentItem.note.slice(0, 15)}...`;
     }else if(password){
         listItemData.children[1].children[0].innerText = `${currentItem.username.slice(0,13)}...`
         img.src = `../images/${currentItem.platform}.png`;
@@ -89,6 +91,9 @@ const setInputValues = () => {
 
 
 const validateInput = (obj, create = false) => {
+    if(!Object.entries(obj).length){
+        return false
+    }
     for (const [prop, value] of Object.entries(obj)) {
         if (!value) {
             if (create) return false;
@@ -143,19 +148,20 @@ const addEventToBtns = ()=>{
                 if (currentView === "password") {
                     window.password.deletePassword(id);
                     dataSection.innerHTML = window.password.getTemplate();
-                    queryDocument()
                 } else if (currentView === "note") {
                     window.note.deleteNote(id);
+                    dataSection.innerHTML = window.note.getTemplate();
                 } else if (currentView === "credit") {
                     window.credit.deleteCard(id);
                 }
+                queryDocument();
             } else if (btnId === "update") {
                 const id = e.target.dataset.id;
                 if (currentView === "password") {
-                    if(updating){
+                    if(updating) {
                         const newData = getInput(password = true);
                         window.password.updatePassword(id, newData);
-                        setTimeout(()=>showUpdatedData(true,false,false),300)
+                        setTimeout(()=>showUpdatedData(true,false,false),200)
                         updating = false
                         changeInputState()
                     }else{
@@ -164,8 +170,17 @@ const addEventToBtns = ()=>{
                         window.utils.showMsg("Enter The New Values",false)
                     }
                 } else if (currentView === "note") {
-                    const newData = getInput(note = true);
-                    window.note.updateNote(id, newData);
+                    if(updating) {
+                        const newData = getInput(false, note = true, false);
+                        window.note.updateNote(id, newData);
+                        setTimeout(()=>showUpdatedData(false,false,true),200)
+                        updating = false
+                        changeInputState()
+                    }else{
+                        changeInputState(false);
+                        updating = true
+                        window.utils.showMsg("Enter The New Values", false);
+                    }
                 } else if (currentView === "credit") {
                     const newData = getInput(credit = true);
                     window.credit.updateCard(id, newData);
@@ -208,12 +223,12 @@ sections.forEach(section=>{
         }
         else if(ID==='notes'){
             currentView = 'note';
-            data = window.credit.getAll();
+            window.note.getAll();
             dataSection.innerHTML = window.note.getTemplate();
         }
         else if(ID==='bank'){
             currentView = 'bank';
-            data = window.note.getAll();
+            window.credit.getAll();
             dataSection.innerHTML = window.credit.getTemplate();
         }
         queryDocument()

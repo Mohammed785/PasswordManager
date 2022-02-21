@@ -1,4 +1,4 @@
-import { Crypto } from "./Security/crypto";
+import { Crypto } from "./crypto";
 import { Model,LooseObject } from "trilogy";
 import { sendMsg } from "./utils";
 import { createUser } from "./db";

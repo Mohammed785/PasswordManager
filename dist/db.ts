@@ -2,7 +2,7 @@ import { connect, Trilogy, SchemaRaw } from "trilogy";
 import { ICard, ICardDraft, INote, INoteDraft, IPassword, IPasswordDraft } from "./@types";
 import { userModel, passwordModel, noteModel, cardModel } from "./main"
 import { join } from "path";
-import { Crypto } from "./Security/crypto"
+import { Crypto } from "./crypto"
 
 //Schemas
 const UserSchema: SchemaRaw = {
@@ -43,10 +43,9 @@ export const createModel = (db: Trilogy) => {
     });
     const userModel = db.model("User", UserSchema, {
         index: "username",
-        timestamps: true,
     });
-    const noteModel = db.model("Note", NoteSchema, { timestamps: true });
-    const creditCardModel = db.model("Credit", CreditCardSchema,{timestamps:true})
+    const noteModel = db.model("Note", NoteSchema);
+    const creditCardModel = db.model("Credit", CreditCardSchema)
     return { passwordModel, userModel, noteModel, creditCardModel };
 };
 
@@ -118,7 +117,7 @@ export const createNote = (data:INote)=>{
 }
 
 export const updateNote = (id:number,newData:INoteDraft)=>{
-    const note = noteModel.update({id},{newData})
+    const note = noteModel.update({id},newData)
     return note
 };
 

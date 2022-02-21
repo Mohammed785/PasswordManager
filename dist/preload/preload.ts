@@ -53,11 +53,11 @@ const checkUndefined = (data:Array<any>)=>{
 //  password
 ipcRenderer.on("gotAllPasswords",(event,data)=>{
     if(!checkUndefined(data)){
-        dataList.innerHTML = `<p class='not-found'>Nothing To Show</p>`;
+        dataList.innerHTML = `<p class='not-found'>No Passwords Found</p>`;
         return
     }
     const newData = data.map((password:IPassword)=>{
-        return passwordTemplate(password, true).split("\n").join("");
+        return passwordTemplate(password, true);
     })
     dataList.innerHTML = newData.join("")
 })
@@ -73,7 +73,7 @@ ipcRenderer.on("createdPassword",(event,data:IPassword)=>{
 });
 
 ipcRenderer.on("updatedPassword",(event,data)=>{
-    current = data
+    current = data[0]
     showMsg("Password Updated Successfully",false)
 })
 ipcRenderer.on("deletedPassword",(event,id)=>{
@@ -86,30 +86,34 @@ ipcRenderer.on("copiedPassword", (event, password) => {
 });
 
 // note
-ipcRenderer.on("gotAllNotes",(event,data)=>{
-    if (!checkUndefined(data)) {
-        dataListSection.innerHTML = `<p class='not-found'>Nothing To Show</p>`;
+ipcRenderer.on("gotAllNotes",(event,notes)=>{
+    if (!checkUndefined(notes)) {
+        dataList.innerHTML = `<p class='not-found'>No Notes Found</p>`;
         return;
     }
-    const newData = data.map((note: INote) => {
-        return noteTemplate(note, true).split("\n").join("");
+    const notesTemplate = notes.map((note: INote) => {
+        return noteTemplate(note, true);
     });
-    dataListSection.innerHTML = newData.join("");
+    dataList.innerHTML = notesTemplate.join("");
 })
 
-ipcRenderer.on("gotNote",(event,data)=>{
-    
+ipcRenderer.on("gotNote",(event,note)=>{
+    const temp = noteTemplate(note);
+    dataSection.innerHTML = temp;
+    current = note
 });
 
-ipcRenderer.on("createdNote",(event,data)=>{
-    
+ipcRenderer.on("createdNote",(event,note)=>{
+    dataList.innerHTML += noteTemplate(note,true)
 });
 
-ipcRenderer.on("updatedNote",(event,data)=>{
-    
+ipcRenderer.on("updatedNote",(event,note)=>{
+    current = note[0]
+    showMsg("Note Updated Successfully",false)
 })
-ipcRenderer.on("deletedNote",(event,data)=>{
-    
+ipcRenderer.on("deletedNote",(event,id)=>{
+    const child = document.getElementById(id)!;
+    dataList.removeChild(child)
 })
 
 //bank
@@ -188,8 +192,12 @@ const bankMain:string = `<div class="input-section">
             </div>`;
 
 const noteMain:string = `<div class="input-section">
-                <input type="text" class="input" placeholder="Title for the note" name="title" id="noteTitle" required>
-                <textarea name="note" id="noteBody" placeholder="Note" cols="30" rows="10"></textarea>
+                <div class="input-group">                
+                <input type="text" class="input" placeholder="Title for the note" name="title" id="title" required>
+                </div>
+                <div class="input-group">
+                <textarea name="note" class="input" id="note" placeholder="Note" cols="30" rows="10"></textarea>
+                </div>
             </div>`;
 
 const createBtn = `<div class="btn-section">
@@ -203,10 +211,11 @@ const btnSection = (id:number)=>`<div class="btn-section">
 
 const passwordTemplate = (password:IPassword,list=false)=>{
     if(list){
+        const username = password.username;
         return `<li class="item" id="${password.id}">
 <img class="item-image" src="../images/${password.platform}.png" alt="">
 <div class="item-data">
-<p class="item-name">${password.username.slice(0,13)}...</p>
+<p class="item-name">${(username.length>13)?`${username.slice(0,13)}...`:username}</p>
 </div>
 </li>`;
     }
@@ -221,11 +230,13 @@ const passwordTemplate = (password:IPassword,list=false)=>{
 };
 const noteTemplate = (note:INote,list=false)=>{
     if(list){
-        return `<li class="item">
+        const title = note.title
+        const body = note.note
+        return `<li class="item" id=${note.id}>
 <img class="item-image" src="../images/Note.png" alt="">
 <div class="item-data">
-<p class="item-name">${note.title.slice(0,13)}...</p>
-<p class="item-info">${note.note.slice(0,15)}...</p>
+<p class="item-name">${(title.length>13)?`${title.slice(0,13)}...`:title}</p>
+<p class="item-info">${(body.length>15)?`${body.slice(0,15)}...`:body}</p>
 </div>
 </li>`;
     }
