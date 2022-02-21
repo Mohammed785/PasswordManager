@@ -27,8 +27,10 @@ const NoteSchema: SchemaRaw = {
 const CreditCardSchema: SchemaRaw = {
     company: { type: String },
     cardNumber: { type: String },
-    expDate: { type: Date },
+    expYear: { type: Number },
+    expMonth: { type: Number },
     cvv: { type: String },
+    id: "increments"
 };
 
 //DB
@@ -143,7 +145,7 @@ export const createCard = (data:ICard) =>{
 }
 
 export const updateCard = (id: number, newData: ICardDraft) => {
-    const card = cardModel.update({ id }, { newData });
+    const card = cardModel.update({ id }, newData);
     return card;
 };
 

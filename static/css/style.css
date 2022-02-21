@@ -376,8 +376,6 @@ option:checked {
     }
 }
 
-
-/* note section */
 textarea {
     -webkit-tap-highlight-color: transparent;
     margin-top: 10px;
@@ -436,6 +434,11 @@ textarea:placeholder-shown {
     background: none;
 } 
 
+.dates input {
+    width: 6vw;
+    margin: 0 7px;
+    border-radius: 0.95rem;
+}
 .not-found {
     position: absolute;
     text-align: center;

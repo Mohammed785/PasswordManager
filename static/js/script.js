@@ -34,7 +34,9 @@ const queryDocument = (selectedItem=false)=>{
                 window.note.createNote(data);
             } else if (currentView === "credit") {
                 const data = getInput(false,false,credit = true);
-                window.credit.createCredit(data);
+                const validated = validateInput(data,true,true)
+                if(!validated)return window.utils.showMsg("Please Check Your Input!!! And Try Again",true)
+                window.credit.createCard(data);
             }
             setTimeout(queryItems,100)
             document.querySelector(".not-found").remove()
@@ -69,8 +71,8 @@ const showUpdatedData = (password,credit,note) => {
         listItemData.children[0].src = `../images/${currentItem.platform}.png`;
     } else if(credit){
         listItemData.children[1].children[0].innerText = `${currentItem.cardNumber.slice(0,4)}-xxxx...`
-        img.src = `../images/${currentItem.platform}.png`;
-        listItemData.children[0].src = `../images/${currentItem.platform}.png`;
+        img.src = `../images/${currentItem.company}.png`;
+        listItemData.children[0].src = `../images/${currentItem.company}.png`;
     }
 }
 
@@ -98,6 +100,9 @@ const validateInput = (obj, create = false) => {
         if (!value) {
             if (create) return false;
         }
+        if(prop==="cvv" && prop.length!==3)return false
+        // else if(prop==="expMonth" || prop==="expYear"){}
+        // else if(prop==="cardNumber" && prop.length!==)
     }
     return true;
 };
@@ -119,7 +124,8 @@ const getInput = (password = false, note = false, credit = false) => {
         inputs.forEach((input) => {
             if (input.id === "company") data.company = input.value;
             else if (input.id === "cardNumber") data.cardNumber = input.value;
-            else if (input.id === "expDate") data.expDate = input.value;
+            else if (input.id === "expYear") data.expYear = input.value;
+            else if (input.id === "expMonth") data.expMonth = input.value;
             else if (input.id === "cvv") data.cvv = input.value;
         });
     }
@@ -153,6 +159,7 @@ const addEventToBtns = ()=>{
                     dataSection.innerHTML = window.note.getTemplate();
                 } else if (currentView === "credit") {
                     window.credit.deleteCard(id);
+                    dataSection.innerHTML = window.credit.getTemplate();
                 }
                 queryDocument();
             } else if (btnId === "update") {
@@ -182,19 +189,28 @@ const addEventToBtns = ()=>{
                         window.utils.showMsg("Enter The New Values", false);
                     }
                 } else if (currentView === "credit") {
-                    const newData = getInput(credit = true);
-                    window.credit.updateCard(id, newData);
+                    if(updating) {
+                        const newData = getInput(false, false, credit=true);
+                        window.credit.updateCard(id, newData);
+                        setTimeout(()=>showUpdatedData(false,true,false),200)
+                        updating = false
+                        changeInputState()
+                    }else{
+                        changeInputState(false);
+                        updating = true
+                        window.utils.showMsg("Enter The New Values", false);
+                    }
                 }
             }
         });
     });
     copyBtns.forEach(btn=>{
         btn.addEventListener("click",e=>{
-            const value = btn.previousSibling.previousSibling.value;
+            const inp = btn.previousSibling.previousSibling;
             if(btn.previousElementSibling.id==="password"){
-                window.password.copyPassword(value)
+                window.password.copyPassword(inp.value)
             } else {
-                navigator.clipboard.writeText(value);
+                navigator.clipboard.writeText(inp.value);
             }
         })
     })
@@ -206,7 +222,7 @@ const addEventToBtns = ()=>{
             } else if (currentView === "note") {
                 dataSection.innerHTML = window.note.getTemplate();
             } else if (currentView === "bank") {
-                dataSection.innerHTML = window.bank.getTemplate();
+                dataSection.innerHTML = window.credit.getTemplate();
             }
             queryDocument()
         })
@@ -227,7 +243,7 @@ sections.forEach(section=>{
             dataSection.innerHTML = window.note.getTemplate();
         }
         else if(ID==='bank'){
-            currentView = 'bank';
+            currentView = "credit";
             window.credit.getAll();
             dataSection.innerHTML = window.credit.getTemplate();
         }

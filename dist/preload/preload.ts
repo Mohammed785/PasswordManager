@@ -28,7 +28,7 @@ contextBridge.exposeInMainWorld("credit",{
     getCard:(id:number)=>ipcRenderer.send("getCard",id),
     createCard:(data:ICard)=>ipcRenderer.send("createCard",data),
     updateCard:(id:number,newData:ICardDraft)=>ipcRenderer.send("updateCard",id,newData),
-    deleteCard:(id:number)=>ipcRenderer.send("DeleteCard",id),
+    deleteCard:(id:number)=>ipcRenderer.send("deleteCard",id),
     getTemplate:()=>`${bankMain}${createBtn}`
 });
 
@@ -117,30 +117,34 @@ ipcRenderer.on("deletedNote",(event,id)=>{
 })
 
 //bank
-ipcRenderer.on("gotAllCredits",(event,data)=>{
+ipcRenderer.on("gotAllCards",(event,data)=>{
     if (!checkUndefined(data)) {
-        dataListSection.innerHTML = `<p class='not-found'>Nothing To Show</p>`;
+        dataList.innerHTML = `<p class='not-found'>No Cards Found</p>`;
         return;
     }
     const newData = data.map((card: ICard) => {
-        return creditTemplate(card, true).split("\n").join("");
+        return creditTemplate(card, true);
     });
-    dataListSection.innerHTML = newData.join("");
+    dataList.innerHTML = newData.join("");
 })
 
-ipcRenderer.on("gotCredit",(event,data)=>{
-    
+ipcRenderer.on("gotCard",(event,card)=>{
+    const temp = creditTemplate(card);
+    dataSection.innerHTML = temp;
+    current = card;
 });
 
-ipcRenderer.on("createdCredit",(event,data)=>{
-
+ipcRenderer.on("createdCard",(event,card)=>{
+    dataList.innerHTML +=  creditTemplate(card, true);
 });
 
-ipcRenderer.on("updatedCredit",(event,data)=>{
-    
+ipcRenderer.on("updatedCard",(event,card)=>{
+    current = card[0];
+    showMsg("Card Updated Successfully", false);
 })
-ipcRenderer.on("deletedCredit",(event,data)=>{
-    
+ipcRenderer.on("deletedCard",(event,id)=>{
+    const child = document.getElementById(id)!;
+    dataList.removeChild(child);
 })
 
 
@@ -180,15 +184,27 @@ const passwordMain: string = `<div class="input-section">
                 </div>
             </div>`;
 
-const bankMain:string = `<div class="input-section">
+const bankMain: string = `<div class="input-section">
+                <div class="input-group">
                 <select name="company" id="company" class="input" required>
                     <option value="MasterCard">MasterCard</option>
                     <option value="Visa">Visa</option>
                     <option value="AmericanExpress">AmericanExpress</option>
                 </select>
-                <input type="text" class="input" placeholder="Card Number" name="cardNumber" id="cardNumber" required>
-                <input type="date" class="input" placeholder="Expire Date" name="expDate" id="expDate" required>
-                <input type="text" class="input" placeholder="CVV" name="cvv" id="cvv"  maxlength="3" required>
+                </div>
+                <div class="input-group">
+                <input type="password" class="input" placeholder="Card Number" name="cardNumber" id="cardNumber" required>
+                <svg class="copy" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path d="M320 448v40c0 13.255-10.745 24-24 24H24c-13.255 0-24-10.745-24-24V120c0-13.255 10.745-24 24-24h72v296c0 30.879 25.121 56 56 56h168zm0-344V0H152c-13.255 0-24 10.745-24 24v368c0 13.255 10.745 24 24 24h272c13.255 0 24-10.745 24-24V128H344c-13.2 0-24-10.8-24-24zm120.971-31.029L375.029 7.029A24 24 0 0 0 358.059 0H352v96h96v-6.059a24 24 0 0 0-7.029-16.97z"/></svg>
+                </div>
+                <div class="input-group">
+                <input type="password" class="input" placeholder="CVV" name="cvv" id="cvv"  maxlength="3" required>
+                <svg class="copy" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path d="M320 448v40c0 13.255-10.745 24-24 24H24c-13.255 0-24-10.745-24-24V120c0-13.255 10.745-24 24-24h72v296c0 30.879 25.121 56 56 56h168zm0-344V0H152c-13.255 0-24 10.745-24 24v368c0 13.255 10.745 24 24 24h272c13.255 0 24-10.745 24-24V128H344c-13.2 0-24-10.8-24-24zm120.971-31.029L375.029 7.029A24 24 0 0 0 358.059 0H352v96h96v-6.059a24 24 0 0 0-7.029-16.97z"/></svg>
+                </div>
+                <div class="input-group dates">
+                <input type="text" class="input" placeholder="YY" name="expYear" maxlength="3" id="expYear" required>
+                <input type="text" class="input" placeholder="MM" name="expMonth" maxlength="3" id="expMonth" required>
+                <svg class="copy" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path d="M320 448v40c0 13.255-10.745 24-24 24H24c-13.255 0-24-10.745-24-24V120c0-13.255 10.745-24 24-24h72v296c0 30.879 25.121 56 56 56h168zm0-344V0H152c-13.255 0-24 10.745-24 24v368c0 13.255 10.745 24 24 24h272c13.255 0 24-10.745 24-24V128H344c-13.2 0-24-10.8-24-24zm120.971-31.029L375.029 7.029A24 24 0 0 0 358.059 0H352v96h96v-6.059a24 24 0 0 0-7.029-16.97z"/></svg>
+                </div>
             </div>`;
 
 const noteMain:string = `<div class="input-section">
@@ -251,7 +267,7 @@ ${btnSection(note.id as number)}`;
 };
 const creditTemplate = (credit:ICard,list=false)=>{
     if(list){
-        return `<li class="item">
+        return `<li class="item" id=${credit.id}>
 <img class="item-image" src="../images/${credit.company}.png" alt="">
 <div class="item-data">
 <p class="item-name">${credit.cardNumber.slice(0,4)}-xxxx...</p>

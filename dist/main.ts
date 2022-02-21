@@ -1,12 +1,12 @@
 import {config} from "dotenv"
 config()
 import { app, BrowserWindow, ipcMain, IpcMainEvent, dialog } from "electron";
-import { connectDB, createModel, getPassword, createPassword, updatePassword, deletePassword, getAllPasswords, findAllNotes, findNote, createNote, deleteNote, updateNote } from "./db";
+import { connectDB, createModel, getPassword, createPassword, updatePassword, deletePassword, getAllPasswords, findAllNotes, findNote, createNote, deleteNote, updateNote, findAllCards, findCard, createCard, updateCard, deleteCard } from "./db";
 import { login, register } from "./auth";
 import { LooseObject, Model, Trilogy } from "trilogy";
 import { sendMsg, tryCatch } from "./utils";
 import { join } from "path";
-import { INote, IPassword, IPasswordDraft } from "./@types";
+import { ICard, INote, IPassword } from "./@types";
 import { Crypto } from "./crypto";
 export let passwordModel: Model<LooseObject>;
 export let userModel: Model<LooseObject>;
@@ -127,6 +127,9 @@ ipcMain.on("updatePassword",tryCatch(async (event: IpcMainEvent, id: number, new
 
 ipcMain.on("deletePassword",tryCatch(async (event: IpcMainEvent, id:number) => {
         const deleted = await deletePassword(id);
+        if (!deleted.length) {
+            return sendMsg(`Password Delete Failed No Password Found With Id ${id}`);
+        }
         sendMsg("Password Deleted",false);
         event.reply("deletedPassword", id);
     })
@@ -165,12 +168,48 @@ ipcMain.on("updateNote",tryCatch(async (event:IpcMainEvent, id:number, newNote: 
 
 ipcMain.on("deleteNote",tryCatch(async (event:IpcMainEvent, id:number) => {
     const note = await deleteNote(id);
+    if (!note.length) {
+        return sendMsg(`Note Delete Failed No Note Found With Id ${id}`);
+    }
     sendMsg("Note Deleted",false)
     return event.reply("deletedNote",id)
 }))
 
+ipcMain.on("getAllCards",tryCatch(async (event:IpcMainEvent) => {
+    const cards = await findAllCards()
+    return event.reply("gotAllCards",cards)
+}))
 
+ipcMain.on("getCard",tryCatch(async (event:IpcMainEvent, id:number) => {
+    const card = await findCard(id)
+    return event.reply("gotCard",card)
+}))
 
+ipcMain.on("createCard",tryCatch(async (event:IpcMainEvent, card:ICard) => {
+    const newCard = await createCard(card);
+    if(!newCard){
+        return sendMsg("Card Creation Failed")
+    }
+    sendMsg("Card Created Successfully",false)
+    return event.reply("createdCard",newCard)
+}))
+
+ipcMain.on("updateCard",tryCatch(async (event:IpcMainEvent, id:number, newCard: ICard) => {
+    const updatedCard = await updateCard(id,newCard);
+    if(!updatedCard.length){
+        return sendMsg("Update Failed: Card Not Found Try Again");
+    }
+    return event.reply("updatedCard",updatedCard)
+}))
+
+ipcMain.on("deleteCard",tryCatch(async (event:IpcMainEvent, id:number) => {
+    const card = await deleteCard(id);
+    if(!card.length) {
+        return sendMsg(`Card Delete Failed No Card Found With Id ${id}`)
+    }
+    sendMsg("Card Deleted",false)
+    return event.reply("deletedCard",id)
+}))
 
 app.whenReady().then(async () => {
     try {

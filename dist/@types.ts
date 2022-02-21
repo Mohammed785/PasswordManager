@@ -20,7 +20,8 @@ export interface ICard {
     id?: number
     company: string;
     cardNumber: string;
-    ExpDate: Date;
+    expYear: number;
+    expMonth: number;
     CVV: string;
 }
 
