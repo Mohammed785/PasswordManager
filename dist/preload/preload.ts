@@ -10,6 +10,7 @@ contextBridge.exposeInMainWorld("password",{
     deletePassword:(id:number)=>ipcRenderer.send("deletePassword",id),
     getPlatform:(platform:string)=>ipcRenderer.send("getPlatform",platform),
     deletePlatform:(platform:number)=>ipcRenderer.send("ask-confirm",platform),
+    copyPassword:(password:string)=>ipcRenderer.send("copyPassword",password),
     getTemplate:()=>`${passwordMain}${createBtn}`
 })
 
@@ -79,6 +80,10 @@ ipcRenderer.on("deletedPassword",(event,id)=>{
     const child = document.getElementById(id)!;
     dataList.removeChild(child);
 })
+ipcRenderer.on("copiedPassword", (event, password) => {
+    showMsg("Copied Successfully",false)
+    navigator.clipboard.writeText(password)
+});
 
 // note
 ipcRenderer.on("gotAllNotes",(event,data)=>{

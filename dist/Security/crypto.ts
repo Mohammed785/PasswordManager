@@ -13,20 +13,19 @@ export class Crypto{
         const salt = Buffer.from(process.env.MASTER_SALT,"base64")
         return pbkdf2Sync(password, salt, iterations, keyLen, digest);
     };
-    static cipherData(data:string,key:Buffer,iv:Buffer){
+    static cipherData(data:string,key:Buffer){
+        const iv = Buffer.from(process.env.MASTER_IV,"base64")
         const cipher = createCipheriv("aes-256-cbc",key,iv);
         cipher.write(data);
         cipher.end();
         const encryptedData:Buffer = cipher.read();
-        return {
-            encrypted: encryptedData.toString("base64"),
-            concatenated: Buffer.concat([iv,encryptedData]).toString("base64")
-        };
+        return encryptedData.toString("base64")
     };
-    static decipherData(encrypted:string,key:Buffer,bytesLen:number=16){
-        const iv = key.slice(0,bytesLen);
+    static decipherData(encrypted:string){
+        const key = Buffer.from(this.getUserKey(),"base64");
+        const iv = Buffer.from(process.env.MASTER_IV, "base64");
         const decipher = createDecipheriv("aes-256-cbc",key,iv);
-        decipher.write(encrypted)
+        decipher.write(Buffer.from(encrypted,"base64"))
         decipher.end()
         const decrypted = decipher.read()
         return decrypted.toString()
@@ -38,9 +37,8 @@ export class Crypto{
         sendMsg("Something Went Wrong!!! Try Again Later")
     }
     static hashPassword(password:IPassword) {
-        const {iv} = this.createSaltAndIV(16)
         const key = this.getUserKey()
-        password.password = this.cipherData(password.password,Buffer.from(key,"base64"),iv).concatenated
+        password.password = this.cipherData(password.password,Buffer.from(key,"base64"))
         return password
     }
     static hashMasterPassword(password:string){

@@ -7,7 +7,7 @@ import { LooseObject, Model, Trilogy } from "trilogy";
 import { sendMsg, tryCatch } from "./utils";
 import { join } from "path";
 import { INote, IPassword, IPasswordDraft } from "./@types";
-
+import { Crypto } from "./Security/crypto";
 export let passwordModel: Model<LooseObject>;
 export let userModel: Model<LooseObject>;
 export let noteModel: Model<LooseObject>;
@@ -125,6 +125,11 @@ ipcMain.on("deletePassword",tryCatch(async (event: IpcMainEvent, id:number) => {
         event.reply("deletedPassword", id);
     })
 );
+
+ipcMain.on("copyPassword",tryCatch(async (event: IpcMainEvent, password:string) => {
+    event.reply("copiedPassword", Crypto.decipherData(password));
+}))
+
 app.whenReady().then(async () => {
     try {
         db = await connectDB();

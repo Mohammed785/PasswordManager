@@ -11,7 +11,7 @@
 }
 [data-theme="red"] {
     --dark-main: #861c2f;
-    --light-main: #ed3253;
+    --light-main: #be1332;
 }
 [data-theme="green"] {
     --dark-main: #146350;
@@ -121,4 +121,8 @@ svg {
 
 .green {
     background-color: #0a755b;
+}
+
+input[type="password"]{
+    letter-spacing: 0.125em;
 }

@@ -161,6 +161,7 @@ const addEventToBtns = ()=>{
                     }else{
                         changeInputState(false)
                         updating = true
+                        window.utils.showMsg("Enter The New Values",false)
                     }
                 } else if (currentView === "note") {
                     const newData = getInput(note = true);
@@ -174,7 +175,12 @@ const addEventToBtns = ()=>{
     });
     copyBtns.forEach(btn=>{
         btn.addEventListener("click",e=>{
-            navigator.clipboard.writeText(btn.previousSibling.previousSibling.value);
+            const value = btn.previousSibling.previousSibling.value;
+            if(btn.previousElementSibling.id==="password"){
+                window.password.copyPassword(value)
+            } else {
+                navigator.clipboard.writeText(value);
+            }
         })
     })
     setTimeout(()=>{
