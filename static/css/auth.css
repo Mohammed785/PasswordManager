@@ -86,7 +86,9 @@ button {
         12px 12px 24px var(--color-shadow);
   transition: all 0.8s ease;  
 }
-
+.help-btn{
+  box-shadow: none;
+}
 button:hover {
   box-shadow: inset 0 0 0 2px var(--bgColor),
         inset -2px -2px 2px 2px var(--color-light),

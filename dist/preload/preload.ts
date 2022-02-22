@@ -159,6 +159,7 @@ ipcRenderer.on("success", (event, msg) => {
 // main page html template
 const passwordMain: string = `<div class="input-section">
                 <div class="input-group">
+                <label for="platform">Platform: </label>
                 <select name="platform" id="platform" class="input" required>
                     <option value="Facebook">Facebook</option>
                     <option value="Instagram">Instagram</option>
@@ -175,10 +176,12 @@ const passwordMain: string = `<div class="input-section">
                 </select>
                 </div>
                 <div class="input-group">
+                <label for="username">Username: </label>
                 <input type="text" class="input" placeholder="Username or Email" name="username" id="username" required>
                 <svg class="copy" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path d="M320 448v40c0 13.255-10.745 24-24 24H24c-13.255 0-24-10.745-24-24V120c0-13.255 10.745-24 24-24h72v296c0 30.879 25.121 56 56 56h168zm0-344V0H152c-13.255 0-24 10.745-24 24v368c0 13.255 10.745 24 24 24h272c13.255 0 24-10.745 24-24V128H344c-13.2 0-24-10.8-24-24zm120.971-31.029L375.029 7.029A24 24 0 0 0 358.059 0H352v96h96v-6.059a24 24 0 0 0-7.029-16.97z"/></svg>
                 </div>
                 <div class="input-group">
+                <label for="password">Password: </label>
                 <input type="password" class="input" placeholder="Password" name="password" id="password" required>
                 <svg class="copy" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path d="M320 448v40c0 13.255-10.745 24-24 24H24c-13.255 0-24-10.745-24-24V120c0-13.255 10.745-24 24-24h72v296c0 30.879 25.121 56 56 56h168zm0-344V0H152c-13.255 0-24 10.745-24 24v368c0 13.255 10.745 24 24 24h272c13.255 0 24-10.745 24-24V128H344c-13.2 0-24-10.8-24-24zm120.971-31.029L375.029 7.029A24 24 0 0 0 358.059 0H352v96h96v-6.059a24 24 0 0 0-7.029-16.97z"/></svg>
                 </div>
@@ -186,6 +189,7 @@ const passwordMain: string = `<div class="input-section">
 
 const bankMain: string = `<div class="input-section">
                 <div class="input-group">
+                <label for="company">Company: </label>
                 <select name="company" id="company" class="input" required>
                     <option value="MasterCard">MasterCard</option>
                     <option value="Visa">Visa</option>
@@ -193,25 +197,36 @@ const bankMain: string = `<div class="input-section">
                 </select>
                 </div>
                 <div class="input-group">
-                <input type="password" class="input" placeholder="Card Number" name="cardNumber" id="cardNumber" required>
+                <label for="name">Name: </label>
+                <input type="text" class="input" placeholder="Card Name (helps to differentiate between cards)" name="name" id="name" required>
                 <svg class="copy" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path d="M320 448v40c0 13.255-10.745 24-24 24H24c-13.255 0-24-10.745-24-24V120c0-13.255 10.745-24 24-24h72v296c0 30.879 25.121 56 56 56h168zm0-344V0H152c-13.255 0-24 10.745-24 24v368c0 13.255 10.745 24 24 24h272c13.255 0 24-10.745 24-24V128H344c-13.2 0-24-10.8-24-24zm120.971-31.029L375.029 7.029A24 24 0 0 0 358.059 0H352v96h96v-6.059a24 24 0 0 0-7.029-16.97z"/></svg>
                 </div>
                 <div class="input-group">
+                <label for="cardNumber">Card Number: </label>
+                <input type="password" class="input" placeholder="Card Number" name="cardNumber" maxlength="16" id="cardNumber" required>
+                <svg class="copy" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path d="M320 448v40c0 13.255-10.745 24-24 24H24c-13.255 0-24-10.745-24-24V120c0-13.255 10.745-24 24-24h72v296c0 30.879 25.121 56 56 56h168zm0-344V0H152c-13.255 0-24 10.745-24 24v368c0 13.255 10.745 24 24 24h272c13.255 0 24-10.745 24-24V128H344c-13.2 0-24-10.8-24-24zm120.971-31.029L375.029 7.029A24 24 0 0 0 358.059 0H352v96h96v-6.059a24 24 0 0 0-7.029-16.97z"/></svg>
+                </div>
+                <div class="input-group">
+                <label for="cvv">CVV: </label>
                 <input type="password" class="input" placeholder="CVV" name="cvv" id="cvv"  maxlength="3" required>
                 <svg class="copy" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path d="M320 448v40c0 13.255-10.745 24-24 24H24c-13.255 0-24-10.745-24-24V120c0-13.255 10.745-24 24-24h72v296c0 30.879 25.121 56 56 56h168zm0-344V0H152c-13.255 0-24 10.745-24 24v368c0 13.255 10.745 24 24 24h272c13.255 0 24-10.745 24-24V128H344c-13.2 0-24-10.8-24-24zm120.971-31.029L375.029 7.029A24 24 0 0 0 358.059 0H352v96h96v-6.059a24 24 0 0 0-7.029-16.97z"/></svg>
                 </div>
                 <div class="input-group dates">
-                <input type="text" class="input" placeholder="YY" name="expYear" maxlength="3" id="expYear" required>
-                <input type="text" class="input" placeholder="MM" name="expMonth" maxlength="3" id="expMonth" required>
+                <label for="expYear">Year: </label>
+                <input type="text" class="input" placeholder="YY" name="expYear" maxlength="2" id="expYear" required>
+                <label for="expMonth">Month: </label>
+                <input type="text" class="input" placeholder="MM" name="expMonth" maxlength="2" id="expMonth" required>
                 <svg class="copy" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path d="M320 448v40c0 13.255-10.745 24-24 24H24c-13.255 0-24-10.745-24-24V120c0-13.255 10.745-24 24-24h72v296c0 30.879 25.121 56 56 56h168zm0-344V0H152c-13.255 0-24 10.745-24 24v368c0 13.255 10.745 24 24 24h272c13.255 0 24-10.745 24-24V128H344c-13.2 0-24-10.8-24-24zm120.971-31.029L375.029 7.029A24 24 0 0 0 358.059 0H352v96h96v-6.059a24 24 0 0 0-7.029-16.97z"/></svg>
                 </div>
             </div>`;
 
 const noteMain:string = `<div class="input-section">
-                <div class="input-group">                
+                <div class="input-group">
+                <label for="title">Title: </label>           
                 <input type="text" class="input" placeholder="Title for the note" name="title" id="title" required>
                 </div>
                 <div class="input-group">
+                <label for="note">Note: </label>
                 <textarea name="note" class="input" id="note" placeholder="Note" cols="30" rows="10"></textarea>
                 </div>
             </div>`;
@@ -238,8 +253,8 @@ const passwordTemplate = (password:IPassword,list=false)=>{
     return `<span class="close">x</span>
 <div class="logo-cont">
 <img class="data-img" src="../images/${password.platform}.png" alt="">
-<!---<span class="circle__back-1"></span>
-<span class="circle__back-2"></span>--->
+<span class="circle__back-1"></span>
+<span class="circle__back-2"></span>
 </div>
             ${passwordMain}
             ${btnSection(password.id as number)}`;
@@ -259,26 +274,27 @@ const noteTemplate = (note:INote,list=false)=>{
     return `<span class="close">x</span>
 <div class="logo-cont">
 <img class="data-img" src="../images/Note.png" alt="">
-<!---<span class="circle__back-1"></span>
-<span class="circle__back-2"></span>--->
+<span class="circle__back-1"></span>
+<span class="circle__back-2"></span>
 </div>
 ${noteMain}
 ${btnSection(note.id as number)}`;
 };
 const creditTemplate = (credit:ICard,list=false)=>{
     if(list){
+        const name = credit.name
         return `<li class="item" id=${credit.id}>
 <img class="item-image" src="../images/${credit.company}.png" alt="">
 <div class="item-data">
-<p class="item-name">${credit.cardNumber.slice(0,4)}-xxxx...</p>
+<p class="item-name">${name.length > 13 ? `${name.slice(0, 13)}...` : name}</p>
 </div>
 </li>`;
     }
     return `<span class="close">x</span>
 <div class="logo-cont">
 <img class="data-img" src="../images/${credit.company}.png" alt="">
-<!---<span class="circle__back-1"></span>
-<span class="circle__back-2"></span>--->
+<span class="circle__back-1"></span>
+<span class="circle__back-2"></span>
 </div>
 ${bankMain}
 ${btnSection(credit.id as number)}`;

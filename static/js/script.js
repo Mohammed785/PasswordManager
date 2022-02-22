@@ -34,12 +34,14 @@ const queryDocument = (selectedItem=false)=>{
                 window.note.createNote(data);
             } else if (currentView === "credit") {
                 const data = getInput(false,false,credit = true);
-                const validated = validateInput(data,true,true)
+                const validated = validateInput(data,true)
                 if(!validated)return window.utils.showMsg("Please Check Your Input!!! And Try Again",true)
                 window.credit.createCard(data);
             }
             setTimeout(queryItems,100)
-            document.querySelector(".not-found").remove()
+            const notFoundMsg = document.querySelector(".not-found")
+            if(notFoundMsg)notFoundMsg.remove()
+            setInputValues(true)
         })
     }
 }
@@ -70,16 +72,23 @@ const showUpdatedData = (password,credit,note) => {
         img.src = `../images/${currentItem.platform}.png`;
         listItemData.children[0].src = `../images/${currentItem.platform}.png`;
     } else if(credit){
-        listItemData.children[1].children[0].innerText = `${currentItem.cardNumber.slice(0,4)}-xxxx...`
+        const name = currentItem.name
+        listItemData.children[1].children[0].innerText = `${name.length > 13 ? `${name.slice(0, 13)}...` : name}`
         img.src = `../images/${currentItem.company}.png`;
         listItemData.children[0].src = `../images/${currentItem.company}.png`;
     }
 }
 
 // input
-const setInputValues = () => {
+const setInputValues = (reset=false) => {
     const currentItem = window.utils.getCurrent();
     inputs = document.querySelectorAll(".input");
+    if(reset){
+        inputs.forEach((inp) => {
+            inp.value = "";
+        });
+        return
+    }
     if(currentItem){
         for(const [prop,value] of Object.entries(currentItem)){
             inputs.forEach(inp=>{
@@ -100,9 +109,6 @@ const validateInput = (obj, create = false) => {
         if (!value) {
             if (create) return false;
         }
-        if(prop==="cvv" && prop.length!==3)return false
-        // else if(prop==="expMonth" || prop==="expYear"){}
-        // else if(prop==="cardNumber" && prop.length!==)
     }
     return true;
 };
@@ -127,6 +133,7 @@ const getInput = (password = false, note = false, credit = false) => {
             else if (input.id === "expYear") data.expYear = input.value;
             else if (input.id === "expMonth") data.expMonth = input.value;
             else if (input.id === "cvv") data.cvv = input.value;
+            else if (input.id === "name") data.name = input.value;
         });
     }
     return data;
@@ -207,7 +214,8 @@ const addEventToBtns = ()=>{
     copyBtns.forEach(btn=>{
         btn.addEventListener("click",e=>{
             const inp = btn.previousSibling.previousSibling;
-            if(btn.previousElementSibling.id==="password"){
+            const id = btn.previousElementSibling.id
+            if(id==="password"||id==="cvv"||id==="cardNumber"){
                 window.password.copyPassword(inp.value)
             } else {
                 navigator.clipboard.writeText(inp.value);

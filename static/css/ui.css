@@ -21,6 +21,10 @@
     --dark-main: #005696;
     --light-main: #0d9ef1;
 }
+[data-theme="yellow"] {
+    --dark-main: #b39200;
+    --light-main: #fccf08;
+}
 
 .light-mode {
     --bgColor: #e0e5ec;
@@ -29,6 +33,18 @@
     --color-light: #fff;
     --lg-dark: #d7dce5;
     --lg-light: #f0f5fd;
+}
+@font-face {
+    font-family: Montserrat;
+    src: url(../Montserrat-Medium.woff);
+}
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    transition: all 0.5s ease;
+    font-family: Montserrat, sans-serif;
+    color: var(--dark-main);
 }
 .errors{
   position: absolute;
@@ -123,6 +139,6 @@ svg {
     background-color: #0a755b;
 }
 
-input[type="password"]{
-    letter-spacing: 0.125em;
+.yellow {
+    background-color: #fed415;
 }
