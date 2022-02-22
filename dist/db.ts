@@ -1,5 +1,5 @@
 import { connect, Trilogy, SchemaRaw } from "trilogy";
-import { ICard, ICardDraft, INote, INoteDraft, IPassword, IPasswordDraft } from "./@types";
+import { ICard, INote, INoteDraft, IPassword } from "./@types";
 import { userModel, passwordModel, noteModel, cardModel } from "./main"
 import { join } from "path";
 import { Crypto } from "./crypto"
@@ -30,6 +30,7 @@ const CreditCardSchema: SchemaRaw = {
     expYear: { type: Number },
     expMonth: { type: Number },
     cvv: { type: String },
+    name: {type: String},
     id: "increments"
 };
 
@@ -140,11 +141,14 @@ export const findCard = (id:number)=>{
 }
 
 export const createCard = (data:ICard) =>{
+    data = Crypto.hashCardInfo(data)
     const card = cardModel.create(data)
     return card
 }
 
-export const updateCard = (id: number, newData: ICardDraft) => {
+export const updateCard = async(id: number, newData: ICard) => {
+    const old = await cardModel.findOne({ id })!;
+    newData = Crypto.hashCardInfo(newData,old as ICard)
     const card = cardModel.update({ id }, newData);
     return card;
 };

@@ -22,7 +22,8 @@ export interface ICard {
     cardNumber: string;
     expYear: number;
     expMonth: number;
-    CVV: string;
+    cvv: string;
+    name: string;
 }
 
 export interface IPasswordDraft extends Partial<IPassword> {}

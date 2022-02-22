@@ -1,5 +1,5 @@
 import {randomBytes,pbkdf2Sync,createCipheriv,createDecipheriv} from "crypto";
-import { IPassword } from "./@types";
+import { ICard, IPassword } from "./@types";
 import { currentUser } from "./main";
 import { sendMsg } from "./utils";
 
@@ -35,6 +35,17 @@ export class Crypto{
             return currentUser.password
         }
         sendMsg("Something Went Wrong!!! Try Again Later")
+    }
+    static hashCardInfo(card:ICard,old?:ICard) {
+        const key = Buffer.from(this.getUserKey(),"base64")
+        if(old){
+            if(old.cardNumber!==card.cardNumber)card.cardNumber = this.cipherData(card.cardNumber, key);
+            if(old.cvv!==card.cvv)card.cvv = this.cipherData(card.cvv, key);
+            return card
+        }
+        card.cardNumber = this.cipherData(card.cardNumber, key);
+        card.cvv = this.cipherData(card.cvv,key);
+        return card
     }
     static hashPassword(password:IPassword) {
         const key = this.getUserKey()
