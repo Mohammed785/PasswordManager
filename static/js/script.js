@@ -85,7 +85,7 @@ const setInputValues = (reset=false) => {
     inputs = document.querySelectorAll(".input");
     if(reset){
         inputs.forEach((inp) => {
-            inp.value = "";
+            if(inp.id!=="platform"&&inp.id!=="company") inp.value = "";
         });
         return
     }
@@ -178,10 +178,6 @@ const addEventToBtns = ()=>{
                         setTimeout(()=>showUpdatedData(true,false,false),200)
                         updating = false
                         changeInputState()
-                    }else{
-                        changeInputState(false)
-                        updating = true
-                        window.utils.showMsg("Enter The New Values",false)
                     }
                 } else if (currentView === "note") {
                     if(updating) {
@@ -190,10 +186,6 @@ const addEventToBtns = ()=>{
                         setTimeout(()=>showUpdatedData(false,false,true),200)
                         updating = false
                         changeInputState()
-                    }else{
-                        changeInputState(false);
-                        updating = true
-                        window.utils.showMsg("Enter The New Values", false);
                     }
                 } else if (currentView === "credit") {
                     if(updating) {
@@ -202,11 +194,12 @@ const addEventToBtns = ()=>{
                         setTimeout(()=>showUpdatedData(false,true,false),200)
                         updating = false
                         changeInputState()
-                    }else{
-                        changeInputState(false);
-                        updating = true
-                        window.utils.showMsg("Enter The New Values", false);
                     }
+                }
+                if(!updating){
+                    changeInputState(false);
+                    updating = true
+                    window.utils.showMsg("Enter The New Values", false);
                 }
             }
         });
