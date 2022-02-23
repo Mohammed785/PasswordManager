@@ -9,7 +9,6 @@ toggleBtn.addEventListener("click", (e) => {
 colors.forEach((color) => {
     color.addEventListener("click", (e) => {
         const theme = color.getAttribute("data-color");
-        console.log(theme);
         document.body.setAttribute("data-theme", theme);
     });
 });
