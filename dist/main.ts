@@ -1,5 +1,3 @@
-import {config} from "dotenv"
-config()
 import { app, BrowserWindow, ipcMain, IpcMainEvent, dialog } from "electron";
 import { connectDB, createModel, getPassword, createPassword, updatePassword, deletePassword, getAllPasswords, findAllNotes, findNote, createNote, deleteNote, updateNote, findAllCards, findCard, createCard, updateCard, deleteCard } from "./db";
 import { login, register } from "./auth";

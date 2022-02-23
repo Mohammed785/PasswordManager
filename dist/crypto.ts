@@ -1,7 +1,6 @@
 import {randomBytes,pbkdf2Sync,createCipheriv,createDecipheriv} from "crypto";
 import { ICard, IPassword } from "./@types";
 import { currentUser } from "./main";
-import { sendMsg } from "./utils";
 
 export class Crypto{
     static createSaltAndIV(bytes:number=16){
@@ -9,35 +8,34 @@ export class Crypto{
         const iv:Buffer = randomBytes(bytes);
         return {salt,iv};
     }
-    static createPBKDF2Key(password:string,iterations:number=100000,keyLen:number=256/8,digest:string="sha256"):Buffer{
-        const salt = Buffer.from(process.env.MASTER_SALT,"base64")
-        return pbkdf2Sync(password, salt, iterations, keyLen, digest);
+    static createPBKDF2Key(password:string,salt:Buffer):Buffer{
+        const key = pbkdf2Sync(password, salt, 100000, 256 / 8, "sha256");
+        return Buffer.concat([salt,key])
     };
     static cipherData(data:string,key:Buffer){
-        const iv = Buffer.from(process.env.MASTER_IV,"base64")
+        const iv = randomBytes(16);
         const cipher = createCipheriv("aes-256-cbc",key,iv);
         cipher.write(data);
         cipher.end();
         const encryptedData:Buffer = cipher.read();
-        return encryptedData.toString("base64")
+        return Buffer.concat([iv,encryptedData]).toString("base64")
     };
     static decipherData(encrypted:string){
-        const key = Buffer.from(this.getUserKey(),"base64");
-        const iv = Buffer.from(process.env.MASTER_IV, "base64");
+        const encryptedBuffer = Buffer.from(encrypted,"base64")
+        const key = this.getUserKey()!
+        const iv = encryptedBuffer.slice(0,16)
         const decipher = createDecipheriv("aes-256-cbc",key,iv);
-        decipher.write(Buffer.from(encrypted,"base64"))
+        decipher.write(encryptedBuffer.slice(16));
         decipher.end()
         const decrypted = decipher.read()
         return decrypted.toString()
     }
     static getUserKey(){
-        if(currentUser){
-            return currentUser.password
-        }
-        sendMsg("Something Went Wrong!!! Try Again Later")
+        const enc = Buffer.from(currentUser!.password,"base64");
+        return enc.slice(16)
     }
-    static hashCardInfo(card:ICard,old?:ICard) {
-        const key = Buffer.from(this.getUserKey(),"base64")
+    static hashCardInfo(card:ICard,old?:ICard):ICard {
+        const key  = this.getUserKey()!
         if(old){
             if(old.cardNumber!==card.cardNumber)card.cardNumber = this.cipherData(card.cardNumber, key);
             if(old.cvv!==card.cvv)card.cvv = this.cipherData(card.cvv, key);
@@ -48,18 +46,20 @@ export class Crypto{
         return card
     }
     static hashPassword(password:IPassword) {
-        const key = this.getUserKey()
-        password.password = this.cipherData(password.password,Buffer.from(key,"base64"))
+        const key = this.getUserKey()!
+        password.password = this.cipherData(password.password,key);
         return password
     }
     static hashMasterPassword(password:string){
-        const key = this.createPBKDF2Key(password);
+        const key = this.createPBKDF2Key(password,randomBytes(16));
         const hashedPass = key.toString("base64");
         return hashedPass;
     }
     static checkMasterPassword(password:string,hashedPassword:string){
-        const key = Buffer.from(hashedPassword,"base64");
-        const enteredKey = this.createPBKDF2Key(password);
-        return key.toString("base64") === enteredKey.toString("base64");
+        const keyBuffer = Buffer.from(hashedPassword,"base64");
+        const salt = keyBuffer.slice(0,16);
+        const key = keyBuffer.slice(16);
+        const enteredKey = this.createPBKDF2Key(password,salt);
+        return key.toString("base64") === enteredKey.slice(16).toString("base64");
     }
 }

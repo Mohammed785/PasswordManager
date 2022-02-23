@@ -1,11 +1,5 @@
 import {ICard,ICardDraft,INote,INoteDraft,IPassword,IPasswordDraft} from "./@types"
 declare global{
-    namespace NodeJS{
-        interface ProcessEnv {
-            MASTER_SALT: string;
-            MASTER_IV: string;
-        }
-    }
     interface Window {
         password: {
             getAll: () => void;
