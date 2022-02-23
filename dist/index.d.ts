@@ -1,5 +1,5 @@
-import {ICard,ICardDraft,INote,INoteDraft,IPassword,IPasswordDraft} from "./@types"
-declare global{
+import { ICard, ICardDraft, INote, INoteDraft, IPassword, IPasswordDraft } from "./@types";
+declare global {
     interface Window {
         password: {
             getAll: () => void;
@@ -42,4 +42,4 @@ declare global{
     }
 }
 
-export {}
+export {};

@@ -1,92 +1,89 @@
-import {contextBridge, ipcRenderer} from "electron";
-import { IPassword,IPasswordDraft,ICard,ICardDraft,INote,INoteDraft } from "../@types";
+import { contextBridge, ipcRenderer } from "electron";
+import { IPassword, IPasswordDraft, ICard, ICardDraft, INote, INoteDraft } from "../@types";
 import { showMsg } from "../utils";
 
-contextBridge.exposeInMainWorld("password",{
-    getAll:()=>ipcRenderer.send("getAllPasswords"),
-    getPassword:(id:number)=>ipcRenderer.send("getPasswords",id),
-    createPassword:(data:IPassword)=>ipcRenderer.send("createPassword",data),
-    updatePassword:(id:number,newData:IPasswordDraft)=>ipcRenderer.send("updatePassword",id,newData),
-    deletePassword:(id:number)=>ipcRenderer.send("deletePassword",id),
-    getPlatform:(platform:string)=>ipcRenderer.send("getPlatform",platform),
-    deletePlatform:(platform:number)=>ipcRenderer.send("ask-confirm",platform),
-    copyPassword:(password:string)=>ipcRenderer.send("copyPassword",password),
-    getTemplate:()=>`${passwordMain}${createBtn}`
-})
-
-contextBridge.exposeInMainWorld("note",{
-    getAll:()=>ipcRenderer.send("getAllNotes"),
-    getNote:(id:number)=>ipcRenderer.send("getNote",id),
-    createNote:(data:INote)=>ipcRenderer.send("createNote",data),
-    updateNote:(id:number,newData:INoteDraft)=>ipcRenderer.send("updateNote",id,newData),
-    deleteNote:(id:number)=>ipcRenderer.send("deleteNote",id),
-    getTemplate:()=>`${noteMain}${createBtn}`
-})
-
-contextBridge.exposeInMainWorld("credit",{
-    getAll:()=>ipcRenderer.send("getAllCards"),
-    getCard:(id:number)=>ipcRenderer.send("getCard",id),
-    createCard:(data:ICard)=>ipcRenderer.send("createCard",data),
-    updateCard:(id:number,newData:ICardDraft)=>ipcRenderer.send("updateCard",id,newData),
-    deleteCard:(id:number)=>ipcRenderer.send("deleteCard",id),
-    getTemplate:()=>`${bankMain}${createBtn}`
+contextBridge.exposeInMainWorld("password", {
+    getAll: () => ipcRenderer.send("getAllPasswords"),
+    getPassword: (id: number) => ipcRenderer.send("getPasswords", id),
+    createPassword: (data: IPassword) => ipcRenderer.send("createPassword", data),
+    updatePassword: (id: number, newData: IPasswordDraft) => ipcRenderer.send("updatePassword", id, newData),
+    deletePassword: (id: number) => ipcRenderer.send("deletePassword", id),
+    getTemplate: () => `${passwordMain}${createBtn}`,
 });
 
-contextBridge.exposeInMainWorld("utils",{
-    showMsg:(msg:string,isError:boolean)=>showMsg(msg,isError),
-    getCurrent:()=>current
-})
-let dataListSection:HTMLDivElement;
-let dataSection:HTMLDivElement;
-let dataList:HTMLUListElement;
-let current:ICard|IPassword|INote;
+contextBridge.exposeInMainWorld("note", {
+    getAll: () => ipcRenderer.send("getAllNotes"),
+    getNote: (id: number) => ipcRenderer.send("getNote", id),
+    createNote: (data: INote) => ipcRenderer.send("createNote", data),
+    updateNote: (id: number, newData: INoteDraft) => ipcRenderer.send("updateNote", id, newData),
+    deleteNote: (id: number) => ipcRenderer.send("deleteNote", id),
+    getTemplate: () => `${noteMain}${createBtn}`,
+});
+
+contextBridge.exposeInMainWorld("credit", {
+    getAll: () => ipcRenderer.send("getAllCards"),
+    getCard: (id: number) => ipcRenderer.send("getCard", id),
+    createCard: (data: ICard) => ipcRenderer.send("createCard", data),
+    updateCard: (id: number, newData: ICardDraft) => ipcRenderer.send("updateCard", id, newData),
+    deleteCard: (id: number) => ipcRenderer.send("deleteCard", id),
+    getTemplate: () => `${bankMain}${createBtn}`,
+});
+
+contextBridge.exposeInMainWorld("utils", {
+    showMsg: (msg: string, isError: boolean) => showMsg(msg, isError),
+    getCurrent: () => current,
+    copyHashed: (encrypted: string) => ipcRenderer.send("copyHashed", encrypted)
+});
+
+let dataSection: HTMLDivElement;
+let dataList: HTMLUListElement;
+let current: ICard | IPassword | INote;
 // events
-window.onload = ()=>{
-    dataListSection =  document.querySelector(".data-list-section")!;
+window.onload = () => {
     dataSection = document.querySelector(".data-section")!;
     dataList = document.querySelector(".list")!;
-}
-const checkUndefined = (data:Array<any>)=>{
-    if(data===undefined || !data.length)return false
-    return true
-}
+};
+const checkUndefined = (data: Array<any>) => {
+    if (data === undefined || !data.length) return false;
+    return true;
+};
 //  password
-ipcRenderer.on("gotAllPasswords",(event,data)=>{
-    if(!checkUndefined(data)){
+ipcRenderer.on("gotAllPasswords", (event, data) => {
+    if (!checkUndefined(data)) {
         dataList.innerHTML = `<p class='not-found'>No Passwords Found</p>`;
-        return
+        return;
     }
-    const newData = data.map((password:IPassword)=>{
+    const newData = data.map((password: IPassword) => {
         return passwordTemplate(password, true);
-    })
-    dataList.innerHTML = newData.join("")
-})
+    });
+    dataList.innerHTML = newData.join("");
+});
 
-ipcRenderer.on("gotPassword",(event,password:IPassword)=>{
+ipcRenderer.on("gotPassword", (event, password: IPassword) => {
     const temp = passwordTemplate(password);
     dataSection.innerHTML = temp;
-    current = password
+    current = password;
 });
 
-ipcRenderer.on("createdPassword",(event,data:IPassword)=>{
-    dataList.innerHTML+= passwordTemplate(data,true)
+ipcRenderer.on("createdPassword", (event, data: IPassword) => {
+    dataList.innerHTML += passwordTemplate(data, true);
 });
 
-ipcRenderer.on("updatedPassword",(event,data)=>{
-    current = data[0]
-    showMsg("Password Updated Successfully",false)
-})
-ipcRenderer.on("deletedPassword",(event,id)=>{
+ipcRenderer.on("updatedPassword", (event, data) => {
+    current = data[0];
+    showMsg("Password Updated Successfully", false);
+});
+ipcRenderer.on("deletedPassword", (event, id) => {
     const child = document.getElementById(id)!;
     dataList.removeChild(child);
-})
-ipcRenderer.on("copiedPassword", (event, password) => {
-    showMsg("Copied Successfully",false)
-    navigator.clipboard.writeText(password)
+});
+ipcRenderer.on("copied", (event, decrypted) => {
+    showMsg("Copied Successfully", false);
+    navigator.clipboard.writeText(decrypted);
 });
 
 // note
-ipcRenderer.on("gotAllNotes",(event,notes)=>{
+ipcRenderer.on("gotAllNotes", (event, notes) => {
     if (!checkUndefined(notes)) {
         dataList.innerHTML = `<p class='not-found'>No Notes Found</p>`;
         return;
@@ -95,29 +92,29 @@ ipcRenderer.on("gotAllNotes",(event,notes)=>{
         return noteTemplate(note, true);
     });
     dataList.innerHTML = notesTemplate.join("");
-})
+});
 
-ipcRenderer.on("gotNote",(event,note)=>{
+ipcRenderer.on("gotNote", (event, note) => {
     const temp = noteTemplate(note);
     dataSection.innerHTML = temp;
-    current = note
+    current = note;
 });
 
-ipcRenderer.on("createdNote",(event,note)=>{
-    dataList.innerHTML += noteTemplate(note,true)
+ipcRenderer.on("createdNote", (event, note) => {
+    dataList.innerHTML += noteTemplate(note, true);
 });
 
-ipcRenderer.on("updatedNote",(event,note)=>{
-    current = note[0]
-    showMsg("Note Updated Successfully",false)
-})
-ipcRenderer.on("deletedNote",(event,id)=>{
+ipcRenderer.on("updatedNote", (event, note) => {
+    current = note[0];
+    showMsg("Note Updated Successfully", false);
+});
+ipcRenderer.on("deletedNote", (event, id) => {
     const child = document.getElementById(id)!;
-    dataList.removeChild(child)
-})
+    dataList.removeChild(child);
+});
 
 //bank
-ipcRenderer.on("gotAllCards",(event,data)=>{
+ipcRenderer.on("gotAllCards", (event, data) => {
     if (!checkUndefined(data)) {
         dataList.innerHTML = `<p class='not-found'>No Cards Found</p>`;
         return;
@@ -126,27 +123,26 @@ ipcRenderer.on("gotAllCards",(event,data)=>{
         return creditTemplate(card, true);
     });
     dataList.innerHTML = newData.join("");
-})
+});
 
-ipcRenderer.on("gotCard",(event,card)=>{
+ipcRenderer.on("gotCard", (event, card) => {
     const temp = creditTemplate(card);
     dataSection.innerHTML = temp;
     current = card;
 });
 
-ipcRenderer.on("createdCard",(event,card)=>{
-    dataList.innerHTML +=  creditTemplate(card, true);
+ipcRenderer.on("createdCard", (event, card) => {
+    dataList.innerHTML += creditTemplate(card, true);
 });
 
-ipcRenderer.on("updatedCard",(event,card)=>{
+ipcRenderer.on("updatedCard", (event, card) => {
     current = card[0];
     showMsg("Card Updated Successfully", false);
-})
-ipcRenderer.on("deletedCard",(event,id)=>{
+});
+ipcRenderer.on("deletedCard", (event, id) => {
     const child = document.getElementById(id)!;
     dataList.removeChild(child);
-})
-
+});
 
 ipcRenderer.on("error", (event, msg) => {
     showMsg(msg);
@@ -220,7 +216,7 @@ const bankMain: string = `<div class="input-section">
                 </div>
             </div>`;
 
-const noteMain:string = `<div class="input-section">
+const noteMain: string = `<div class="input-section">
                 <div class="input-group">
                 <label for="title">Title: </label>           
                 <input type="text" class="input" placeholder="Title for the note" name="title" id="title" required>
@@ -235,18 +231,20 @@ const createBtn = `<div class="btn-section">
                 <button class="btn" id="create">Create</button>
             </div>`;
 
-const btnSection = (id:number)=>`<div class="btn-section">
+const btnSection = (id: number) => `<div class="btn-section">
                 <button class="btn" id="delete" data-id=${id}>Delete</button>
                 <button class="btn" id="update" data-id=${id}>Update</button>
             </div>`;
 
-const passwordTemplate = (password:IPassword,list=false)=>{
-    if(list){
+const passwordTemplate = (password: IPassword, list = false) => {
+    if (list) {
         const username = password.username;
         return `<li class="item" id="${password.id}">
 <img class="item-image" src="../images/${password.platform}.png" alt="">
 <div class="item-data">
-<p class="item-name">${(username.length>13)?`${username.slice(0,13)}...`:username}</p>
+<p class="item-name">${
+            username.length > 13 ? `${username.slice(0, 13)}...` : username
+        }</p>
 </div>
 </li>`;
     }
@@ -259,15 +257,17 @@ const passwordTemplate = (password:IPassword,list=false)=>{
             ${passwordMain}
             ${btnSection(password.id as number)}`;
 };
-const noteTemplate = (note:INote,list=false)=>{
-    if(list){
-        const title = note.title
-        const body = note.note
+const noteTemplate = (note: INote, list = false) => {
+    if (list) {
+        const title = note.title;
+        const body = note.note;
         return `<li class="item" id=${note.id}>
 <img class="item-image" src="../images/Note.png" alt="">
 <div class="item-data">
-<p class="item-name">${(title.length>13)?`${title.slice(0,13)}...`:title}</p>
-<p class="item-info">${(body.length>15)?`${body.slice(0,15)}...`:body}</p>
+<p class="item-name">${
+            title.length > 13 ? `${title.slice(0, 13)}...` : title
+        }</p>
+<p class="item-info">${body.length > 15 ? `${body.slice(0, 15)}...` : body}</p>
 </div>
 </li>`;
     }
@@ -280,9 +280,9 @@ const noteTemplate = (note:INote,list=false)=>{
 ${noteMain}
 ${btnSection(note.id as number)}`;
 };
-const creditTemplate = (credit:ICard,list=false)=>{
-    if(list){
-        const name = credit.name
+const creditTemplate = (credit: ICard, list = false) => {
+    if (list) {
+        const name = credit.name;
         return `<li class="item" id=${credit.id}>
 <img class="item-image" src="../images/${credit.company}.png" alt="">
 <div class="item-data">

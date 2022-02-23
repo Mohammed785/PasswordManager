@@ -4,20 +4,20 @@ export interface IUser {
 }
 
 export interface IPassword {
-    id?: number
+    id?: number;
     platform: string;
     username: string;
     password: string;
 }
 
 export interface INote {
-    id?: number
+    id?: number;
     title: string;
     note: string;
 }
 
 export interface ICard {
-    id?: number
+    id?: number;
     company: string;
     cardNumber: string;
     expYear: number;

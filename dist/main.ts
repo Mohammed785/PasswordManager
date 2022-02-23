@@ -1,4 +1,4 @@
-import { app, BrowserWindow, ipcMain, IpcMainEvent, dialog } from "electron";
+import { app, BrowserWindow, ipcMain, IpcMainEvent } from "electron";
 import { connectDB, createModel, getPassword, createPassword, updatePassword, deletePassword, getAllPasswords, findAllNotes, findNote, createNote, deleteNote, updateNote, findAllCards, findCard, createCard, updateCard, deleteCard } from "./db";
 import { login, register } from "./auth";
 import { LooseObject, Model, Trilogy } from "trilogy";
@@ -38,22 +38,6 @@ const createWindow = () => {
     });
     authWin.loadFile(join(__dirname, "..", "static", "html", "login.html"));
 };
-
-
-ipcMain.on("ask-confirm", (event, arg) => {
-    dialog.showMessageBox(BrowserWindow.getFocusedWindow()!, {
-            message:"Check Your Input You May Delete Entire Platform Are You Sure",
-            type: "warning",
-            buttons: ["Yes", "No"],
-        }).then(async(res) => {
-            if(res.response===1){
-                event.reply('Error','Delete Cancelled');
-            }else{
-                const data = await deletePassword(arg);
-                event.reply("deleted",data);
-            }
-        }).catch((e) => event.reply("Error",e));
-});
 
 ipcMain.on("load-login",()=>{
     BrowserWindow.getAllWindows()[0].loadFile(join(__dirname,"..","static","html","login.html"))
@@ -133,8 +117,8 @@ ipcMain.on("deletePassword",tryCatch(async (event: IpcMainEvent, id:number) => {
     })
 );
 
-ipcMain.on("copyPassword",tryCatch(async (event: IpcMainEvent, password:string) => {
-    event.reply("copiedPassword", Crypto.decipherData(password));
+ipcMain.on("copyHashed",tryCatch(async (event: IpcMainEvent, encrypted:string) => {
+    event.reply("copied", Crypto.decipherData(encrypted));
 }))
 
 ipcMain.on("getAllNotes",tryCatch(async (event:IpcMainEvent) => {

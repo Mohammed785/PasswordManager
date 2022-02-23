@@ -19,7 +19,7 @@ submitBtn.addEventListener("click", (e) => {
 
 helpBtns.forEach((btn) => {
     btn.addEventListener("click", (e) => {
-        const name = (e.target).name;
+        const name = e.target.name;
         if (name === "forget") {
             //TODO:
         } else if (name === "need-acc") {

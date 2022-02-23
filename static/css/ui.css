@@ -1,5 +1,5 @@
 :root {
-    --bgColor: #0E1218;
+    --bgColor: #0e1218;
     --bgColor2: #151c27;
     --dark-main: #005696;
     --light-main: #0d9ef1;
@@ -7,7 +7,7 @@
     --color-light: #161d26;
     --lg-dark: #0a0c11;
     --lg-light: #0f131a;
-    --main-radius: 2.825rem
+    --main-radius: 2.825rem;
 }
 [data-theme="red"] {
     --dark-main: #861c2f;
@@ -46,45 +46,45 @@
     font-family: Montserrat, sans-serif;
     color: var(--dark-main);
 }
-.errors{
-  position: absolute;
-  top: 0;
-  width: 80%;
-  display: flex;
-  flex-direction: column;
+.errors {
+    position: absolute;
+    top: 0;
+    width: 80%;
+    display: flex;
+    flex-direction: column;
 }
-.error-msg{
-  padding: 10px 5px;
-  background-color: #005696;
-  margin-bottom: 4px;
-  border: 0;
-  border-radius: 10px;
-  text-align: center;
-  font-size: 1rem;
-  font-weight: 500;
-  text-transform: capitalize;
+.error-msg {
+    padding: 10px 5px;
+    background-color: #005696;
+    margin-bottom: 4px;
+    border: 0;
+    border-radius: 10px;
+    text-align: center;
+    font-size: 1rem;
+    font-weight: 500;
+    text-transform: capitalize;
 }
-.error-msg:first-child{
-  border-radius: 0 0 10px 10px;
+.error-msg:first-child {
+    border-radius: 0 0 10px 10px;
 }
 .error-close {
-  font-weight: bold;
-  float: right;
-  font-size: 1.2rem;
-  line-height: 1.25rem;
-  margin: 0 4px;
-  cursor: pointer;
-  color:white;
+    font-weight: bold;
+    float: right;
+    font-size: 1.2rem;
+    line-height: 1.25rem;
+    margin: 0 4px;
+    cursor: pointer;
+    color: white;
 }
-.error{
-  background-color: #85042a;
-  color: white;
-  z-index: 99;
+.error {
+    background-color: #85042a;
+    color: white;
+    z-index: 99;
 }
-.success{
-  background-color: #037e55;
-  color: white;
-  z-index: 99;
+.success {
+    background-color: #037e55;
+    color: white;
+    z-index: 99;
 }
 
 .theme-area {

@@ -26,14 +26,14 @@ body {
     border-radius: 0 0 var(--main-radius) var(--main-radius);
 }
 
-.sections ul{
+.sections ul {
     list-style: none;
     text-align: center;
     overflow: hidden;
     width: 75vw;
 }
 
-.sections  ul li {
+.sections ul li {
     display: inline-block;
     padding: 0.5rem 0;
     width: 33%;
@@ -49,10 +49,10 @@ body {
     background-color: var(--color-light);
 }
 
-.sections ul li:nth-child(1){
+.sections ul li:nth-child(1) {
     border-radius: 0 0 0 var(--main-radius);
 }
-.sections ul li:nth-child(3){
+.sections ul li:nth-child(3) {
     border-radius: 0 0 var(--main-radius) 0;
 }
 
@@ -68,11 +68,11 @@ body {
     border-right: 3px solid var(--color-shadow);
 }
 
-.list{
+.list {
     list-style: none;
 }
 
-.item{
+.item {
     background-color: var(--bgColor2);
     display: flex;
     align-items: center;
@@ -80,33 +80,33 @@ body {
     margin: 5px 0;
     cursor: pointer;
     box-shadow: inset 1px 1px 1px var(--color-light),
-        inset -1px -1px 1px var(--color-shadow), 2px 2px 2px var(--color-shadow)
+        inset -1px -1px 1px var(--color-shadow), 2px 2px 2px var(--color-shadow);
 }
 
-.item:first-child{
+.item:first-child {
     margin-top: 0;
     border-radius: var(--main-radius) 0 0 0;
 }
 
-.item:last-child{
+.item:last-child {
     margin-bottom: 0;
 }
 
-.item-data{
+.item-data {
     margin-left: 0.125rem;
 }
 
-.item-name{
+.item-name {
     font-size: 1.25rem;
     font-weight: 600;
 }
 
-.item-info{
+.item-info {
     font-size: 0.68rem;
     font-weight: 500;
 }
 
-.item-image{
+.item-image {
     width: 50px;
 }
 
@@ -119,7 +119,7 @@ body {
     align-items: center;
     flex-direction: column;
 }
-.logo-cont{
+.logo-cont {
     border-radius: 75px;
     box-shadow: inset 1px 1px 1px var(--color-light),
         -2px -2px 2px var(--color-light), -4px -4px 6px var(--color-light),
@@ -132,7 +132,7 @@ body {
     background-color: var(--bgColor);
     position: relative;
 }
-.data-img{
+.data-img {
     width: 100px;
 }
 .input-section {
@@ -147,7 +147,8 @@ body {
     margin: 0.453rem 0;
 }
 
-.input-group input,select {
+.input-group input,
+select {
     display: block;
     width: 40vw;
     padding: 0.5rem 0.6rem;
@@ -218,7 +219,8 @@ label {
     clear: left;
     text-align: right;
 }
-input ,label{
+input,
+label {
     float: left;
 }
 
@@ -292,11 +294,9 @@ input ,label{
     padding: 2px;
     border-radius: 30px;
     box-shadow: inset 1px 1px 1px var(--color-light),
-        -2px -2px 2px var(--color-light),
-         -4px -4px 6px var(--color-light),
-        inset -1px -1px 1px var(--color-shadow), 
-         8px 8px 16px var(--color-shadow),
-        8px 8px 8px var(--color-shadow);
+        -2px -2px 2px var(--color-light), -4px -4px 6px var(--color-light),
+        inset -1px -1px 1px var(--color-shadow),
+        8px 8px 16px var(--color-shadow), 8px 8px 8px var(--color-shadow);
     text-align: center;
 }
 
@@ -416,7 +416,7 @@ textarea:focus {
 
 textarea:placeholder-shown {
     background: none;
-} 
+}
 
 .dates input {
     width: 6vw;
