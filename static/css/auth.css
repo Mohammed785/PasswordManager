@@ -103,39 +103,3 @@ button:active {
 .help-btns {
     display: flex;
 }
-
-.errors {
-    position: absolute;
-    top: 0;
-    width: 80%;
-    display: flex;
-    flex-direction: column;
-}
-.error-msg {
-    padding: 10px 5px;
-    background-color: #005696;
-    margin-bottom: 4px;
-    border: 0;
-    border-radius: 10px;
-    text-align: center;
-    font-size: 1rem;
-    font-weight: 500;
-    text-transform: capitalize;
-}
-.error-msg:first-child {
-    border-radius: 0 0 10px 10px;
-}
-.error-close {
-    font-weight: bold;
-    float: right;
-    font-size: 1.2rem;
-    line-height: 1.25rem;
-    margin: 0 4px;
-    cursor: pointer;
-}
-.error {
-    background-color: #85042a;
-}
-.success {
-    background-color: #037e55;
-}

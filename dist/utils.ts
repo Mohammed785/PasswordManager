@@ -19,10 +19,8 @@ export const sendMsg = (msg: string, isError = true) => {
 
 export const showMsg = (msg: string, isError = true) => {
     const errorArea = document.querySelector(".errors") as HTMLDivElement;
-    errorArea.innerHTML += `<div class="error-msg ${isError ? "error" : "success"}">
-            <span class="error-close">&times;</span>
-            ${msg}
-    </div>`;
+    errorArea.innerHTML += `<div class="error-msg ${isError ? "error" : "success"} fade-msg">
+            <span class="error-close">&times;</span>${msg}</div>`;
     const close = document.querySelectorAll(".error-close");
     close.forEach((btn) => {
         btn.addEventListener("click", (e) => {
@@ -31,4 +29,10 @@ export const showMsg = (msg: string, isError = true) => {
             );
         });
     });
+    setTimeout(() => {
+        if (errorArea.children.length != 0) {
+            const firstChild = errorArea.children[0];
+            if (firstChild) errorArea.removeChild(firstChild);
+        }
+    }, 2000);
 };
